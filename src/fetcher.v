@@ -1,42 +1,14 @@
-`timescale 1ns / 1ps
-`default_nettype none
-
-
+// fetcher.v
 module fetcher #(
-    parameter ADDR_WIDTH = 8,
-    parameter INST_WIDTH = 32
+    parameter ADDR_WIDTH = 4,   
+    parameter DATA_WIDTH = 32,  
+    parameter MEM_DEPTH  = 16   
 )(
-    input  wire                 clk,
-    input  wire                 reset,
-
-    // Control
-    input  wire                 fetch_enable,   // enable fetching
-
-    output reg  [INST_WIDTH-1:0] instruction,
-    output reg  [ADDR_WIDTH-1:0] pc
+    input  [ADDR_WIDTH-1:0] pc_in,
+    output [DATA_WIDTH-1:0] instruction,
+    input  [DATA_WIDTH-1:0] instr_mem [0:MEM_DEPTH-1]
 );
 
-
-    reg [INST_WIDTH-1:0] instr_mem [0:(1<<ADDR_WIDTH)-1];
-
-    initial begin
-        instr_mem[0] = 32'h00000001;
-        instr_mem[1] = 32'h00000002;
-        instr_mem[2] = 32'h00000003;
-        instr_mem[3] = 32'h00000004;
-    end
-
-
-    always @(posedge clk) begin
-        if (reset) begin
-            pc <= {ADDR_WIDTH{1'b0}};
-            instruction <= {INST_WIDTH{1'b0}};
-        end else if (fetch_enable) begin
-            instruction <= instr_mem[pc];
-            pc <= pc + 1'b1;
-        end
-    end
+    assign instruction = instr_mem[pc_in];
 
 endmodule
-
-`default_nettype wire
