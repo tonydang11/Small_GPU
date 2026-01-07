@@ -1,17 +1,14 @@
-`include "alu.v"  // Bao gồm mô-đun ALU từ alu.v
+`include "alu.v"
 
 module alu_tb;
 
-    // Inputs
     reg [3:0] opcode;
     reg [`DATA_WIDTH-1:0] operand_a;
     reg [`DATA_WIDTH-1:0] operand_b;
 
-    // Outputs
     wire [`DATA_WIDTH-1:0] result;
     wire cmp_flag;
 
-    // Instantiate the ALU (Sử dụng mô-đun đã bao gồm từ alu.v)
     alu uut (
         .opcode(opcode),
         .operand_a(operand_a),
@@ -20,39 +17,35 @@ module alu_tb;
         .cmp_flag(cmp_flag)
     );
 
-    // Testbench stimulus
     initial begin
-        // Initialize inputs
-        opcode = 4'b0000;
-        operand_a = 32'h00000000;
-        operand_b = 32'h00000000;
+        opcode    = 4'b0000;
+        operand_a = 16'h0000;
+        operand_b = 16'h0000;
 
-        // Display the results
-        $monitor("Time = %0t, opcode = %b, operand_a = %h, operand_b = %h, result = %h, cmp_flag = %b", 
+        $monitor("T=%0t | op=%b | A=%d | B=%d | R=%d | CMP=%b",
                  $time, opcode, operand_a, operand_b, result, cmp_flag);
 
-        // Test case 1: ADD operation (Using operand_b as implicit source or immediate)
-        #10 opcode = `OP_ADD; operand_a = 32'h00000005; operand_b = 32'h00000003; 
-        #10; // Wait for 10 time units
+        // ADD: 7 + 5 = 12
+        #10 opcode = `OP_ADD;  operand_a = 16'd7;  operand_b = 16'd5;
+        #10;
 
-        // Test case 2: SUB operation
-        #10 opcode = `OP_SUB; operand_a = 32'h00000005; operand_b = 32'h00000003; 
-        #10; // Wait for 10 time units
+        // SUB: 9 - 4 = 5
+        #10 opcode = `OP_SUB;  operand_a = 16'd9;  operand_b = 16'd4;
+        #10;
 
-        // Test case 3: MUL operation
-        #10 opcode = `OP_MUL; operand_a = 32'h00000005; operand_b = 32'h00000003; 
-        #10; // Wait for 10 time units
+        // MUL: 6 * 3 = 18
+        #10 opcode = `OP_MUL;  operand_a = 16'd6;  operand_b = 16'd3;
+        #10;
 
-        // Test case 4: CMP operation (comparison)
-        #10 opcode = `OP_CMP; operand_a = 32'h00000003; operand_b = 32'h00000005; 
-        #10; // Wait for 10 time units
-        
-        // Test case 5: ADDI operation (Standard ADD but testing with different values conceptually)
-        #10 opcode = `OP_ADDI; operand_a = 32'h00000010; operand_b = 32'h00000002; // 16 + 2 = 18
-        #10; 
+        // CMP: 2 < 8 → cmp_flag = 1
+        #10 opcode = `OP_CMP;  operand_a = 16'd2;  operand_b = 16'd8;
+        #10;
 
-        // End the simulation
+        // ADDI: 10 + 15 = 25
+        #10 opcode = `OP_ADDI; operand_a = 16'd10; operand_b = 16'd15;
+        #10;
+
         $finish;
     end
-
 endmodule
+
