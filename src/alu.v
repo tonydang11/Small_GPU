@@ -22,16 +22,6 @@ module alu (
                 else
                     cmp_flag = 0;
             end
-            // For ADDI/SUBI, the control logic (compute_core) will feed immediate into operand_b
-            // and use OP_ADD/OP_SUB opcode, or we can add specific cases if needed.
-            // But reusing ADD/SUB is cleaner if opcode is mapped. 
-            // However, since definitions.vh has specific opcodes ADDI/SUBI, let's support them transparently
-            // treating them same as ADD/SUB here?
-            // Actually, in compute_core, I wrote: 
-            // `OP_ADDI: alu_result = ... + immediate`
-            // If we use this ALU module externally, we might want it to handle OP_ADDI too.
-            // But usually ALU just adds A and B. 
-            // Let's keep it simple: ALU takes A and B. It adds them if opcode is ADD or ADDI.
             `OP_ADDI: result = operand_a + operand_b;
             `OP_SUBI: result = operand_a - operand_b;
             
