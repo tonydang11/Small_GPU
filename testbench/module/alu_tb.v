@@ -1,4 +1,3 @@
-`include "alu.v"
 
 module alu_tb;
 

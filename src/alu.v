@@ -22,8 +22,8 @@ module alu (
                 else
                     cmp_flag = 0;
             end
-            `OP_ADDI: result = operand_a + operand_b;
-            `OP_SUBI: result = operand_a - operand_b;
+            //`OP_ADDI: result = operand_a + operand_b;
+            //`OP_SUBI: result = operand_a - operand_b;
             
             default: result = 0;
         endcase

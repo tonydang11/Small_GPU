@@ -1,4 +1,3 @@
-// compute_core.v
 `include "definitions.vh"
 
 module compute_core (
@@ -6,194 +5,195 @@ module compute_core (
     input reset,
     output reg halt
 );
-
-    //  FSM State Definitions (Pipeline Stages)
-    // 4-stage pipeline: FETCH → DECODE → EXECUTE → WRITEBACK
-    localparam FETCH     = 2'b00;
-    localparam DECODE    = 2'b01;
-    localparam EXECUTE   = 2'b10;
-    localparam WRITEBACK = 2'b11;
-
-    reg [1:0] state, next_state;
-
-    //  Architectural State (Registers, PC, Memory)
-    // Register file: [thread][register]
     reg [`DATA_WIDTH-1:0] register_file [0:`NUM_THREADS-1][0:`REG_COUNT-1];
-
-    // Program counter per thread
-    reg [3:0] pc [0:`NUM_THREADS-1];
-
-    // Active thread mask
+    reg [3:0] pc [0:`NUM_THREADS-1];  // 4-bit PC for 16 instruction memory entries
     reg [`NUM_THREADS-1:0] active_threads;
-
-    // Simple data memory
     reg [`DATA_WIDTH-1:0] data_mem [0:15];
-
-    //  Pipeline Registers: FETCH Stage
-    reg [`THREAD_ID_WIDTH-1:0] fetch_thread;
-    reg [`DATA_WIDTH-1:0] fetch_instruction;
-    reg [3:0] fetch_pc;
-
-    //  Pipeline Registers: DECODE Stage
-
-    reg [`THREAD_ID_WIDTH-1:0] decode_thread;
-    reg [`DATA_WIDTH-1:0] decode_instruction;
-    reg [3:0] decode_pc;    
     
-    //  Pipeline Registers: EXECUTE Stage
-    reg [`THREAD_ID_WIDTH-1:0] exec_thread;
-    reg [3:0] exec_opcode;
-    reg [3:0] exec_dest_reg;
-    reg [3:0] exec_src1_reg;
-    reg [3:0] exec_src2_reg;
-    reg [7:0] exec_immediate;
-    reg [3:0] exec_pc;
-    reg [`DATA_WIDTH-1:0] exec_operand_a;
-    reg [`DATA_WIDTH-1:0] exec_operand_b;
-
-    //  Thread Scheduler (Priority-based)
-    reg [`THREAD_ID_WIDTH-1:0] selected_thread;
-    reg thread_selected;
-    integer i;
-
-    // Priority encoder: select lowest active thread
-    always @(*) begin
-        selected_thread = 0;
-        thread_selected = 0;
-        for (i = 0; i < `NUM_THREADS; i = i + 1) begin
-            if (active_threads[i] && !thread_selected) begin
-                selected_thread = i;
-                thread_selected = 1;
-            end
-        end
-    end
-
-    //  Per-thread Compare Flags (for JLT)
-    reg [`NUM_THREADS-1:0] thread_cmp_flags;
-
-    //  Instruction Fetch Unit
-    wire [`DATA_WIDTH-1:0] fetcher_instruction;
-
-    fetcher fetcher_inst (
-        .pc_in(pc[selected_thread]),
-        .instruction(fetcher_instruction)
-    );
-
-    //  Instruction Decoder
-    wire [3:0] decoder_opcode;
-    wire [3:0] decoder_dest_reg;
-    wire [3:0] decoder_src1_reg;
-    wire [3:0] decoder_src2_reg;
-    wire [7:0] decoder_immediate;
-
-    decoder decoder_inst (
-        .instruction(decode_instruction),
-        .opcode(decoder_opcode),
-        .dest_reg(decoder_dest_reg),
-        .src1_reg(decoder_src1_reg),
-        .src2_reg(decoder_src2_reg),
-        .immediate(decoder_immediate)
-    );
-
-    //  ALU
+    wire [`THREAD_ID_WIDTH-1:0] scheduled_thread;
+    wire [`DATA_WIDTH-1:0] instruction;
+    wire [3:0] opcode;
+    wire [3:0] dest_reg;
+    wire [3:0] src1_reg;
+    wire [3:0] src2_reg;
+    wire [7:0] immediate;
+    
+    // ALU signals
+    reg [`DATA_WIDTH-1:0] alu_operand_a;
+    reg [`DATA_WIDTH-1:0] alu_operand_b;
     wire [`DATA_WIDTH-1:0] alu_result;
     wire alu_cmp_flag;
-
+    
+    // Per-thread compare flags
+    reg [`NUM_THREADS-1:0] cmp_flags;
+    
+    integer i, current_thread;
+    reg [`NUM_THREADS-1:0] next_active_threads;
+    
+    // Instantiate Scheduler
+    scheduler scheduler_inst (
+        .clk(clk),
+        .reset(reset),
+        .active_threads(active_threads),
+        .scheduled_thread(scheduled_thread)
+    );
+    
+    // Instantiate Fetcher
+    fetcher fetcher_inst (
+        .pc_in(pc[scheduled_thread]),
+        .instruction(instruction)
+    );
+    
+    // Instantiate Decoder
+    decoder decoder_inst (
+        .instruction(instruction),
+        .opcode(opcode),
+        .dest_reg(dest_reg),
+        .src1_reg(src1_reg),
+        .src2_reg(src2_reg),
+        .immediate(immediate)
+    );
+    
+    // Instantiate ALU
     alu alu_inst (
-        .opcode(exec_opcode),
-        .operand_a(exec_operand_a),
-        .operand_b(exec_operand_b),
+        .opcode(opcode),
+        .operand_a(alu_operand_a),
+        .operand_b(alu_operand_b),
         .result(alu_result),
         .cmp_flag(alu_cmp_flag)
     );
-
-    //  Data Memory Initialization
+    
+    // Initialize data memory
     initial begin
         $readmemh("src/data_memory.mem", data_mem);
-    end
-
-    //  FSM Next-State Logic
-    always @(*) begin
-        case (state)
-            FETCH:     next_state = DECODE;
-            DECODE:    next_state = EXECUTE;
-            EXECUTE:   next_state = WRITEBACK;
-            WRITEBACK: next_state = FETCH;
-            default:   next_state = FETCH;
-        endcase
-    end
-
-    //  FSM State Register
-    always @(posedge clk or posedge reset) begin
-        if (reset)
-            state <= FETCH;
-        else
-            state <= next_state;
-    end
-
-    //  FETCH Stage
-    always @(posedge clk or posedge reset) begin
-        if (reset) begin
-            fetch_thread <= 0;
-            fetch_instruction <= 0;
-            fetch_pc <= 0;
-        end else if (state == FETCH && thread_selected) begin
-            fetch_thread <= selected_thread;
-            fetch_instruction <= fetcher_instruction;
-            fetch_pc <= pc[selected_thread];
+        $display("Data Memory Initialized:");
+        for (i = 0; i < 16; i = i + 1) begin
+            $display("data_mem[%0d] = %h", i, data_mem[i]);
         end
     end
-
-    //  DECODE Stage
+    
+    // Core logic
     always @(posedge clk or posedge reset) begin
         if (reset) begin
-            decode_thread <= 0;
-            decode_instruction <= 0;
-            decode_pc <= 0;
-        end else if (state == DECODE) begin
-            decode_thread <= fetch_thread;
-            decode_instruction <= fetch_instruction;
-            decode_pc <= fetch_pc;
-        end
-    end
-
-    //  EXECUTE Stage
-    always @(posedge clk or posedge reset) begin
-        if (reset) begin
-            exec_thread <= 0;
-            exec_opcode <= 0;
-            exec_dest_reg <= 0;
-            exec_src1_reg <= 0;
-            exec_src2_reg <= 0;
-            exec_immediate <= 0;
-            exec_pc <= 0;
-            exec_operand_a <= 0;
-            exec_operand_b <= 0;
-        end else if (state == EXECUTE) begin
-            exec_thread <= decode_thread;
-            exec_opcode <= decoder_opcode;
-            exec_dest_reg <= decoder_dest_reg;
-            exec_src1_reg <= decoder_src1_reg;
-            exec_src2_reg <= decoder_src2_reg;
-            exec_immediate <= decoder_immediate;
-            exec_pc <= decode_pc;
-            // Operand selection logic
-        end
-    end
-
-    //  WRITEBACK Stage
-    always @(posedge clk or posedge reset) begin
-        if (reset) begin
+            for (i = 0; i < `NUM_THREADS; i = i + 1) begin
+                pc[i] <= 0;
+                active_threads[i] <= 1;
+                cmp_flags[i] <= 0;
+                for (current_thread = 0; current_thread < `REG_COUNT; current_thread = current_thread + 1) begin
+                    register_file[i][current_thread] <= 0;
+                end
+                register_file[i][15] <= i;
+            end
             halt <= 0;
-        end else if (state == WRITEBACK && active_threads[exec_thread]) begin
-            // Register writeback, PC update, memory ops, HALT handling
+            $display("DUT Reset at time %0t", $time);
+        end 
+        else if (!halt) begin
+            next_active_threads = active_threads;
+            current_thread = scheduled_thread;
+            
+            if (active_threads[current_thread]) begin
+                // Prepare ALU inputs based on instruction type
+                case (opcode)
+                    `OP_ADD, `OP_SUB, `OP_MUL, `OP_CMP: begin
+                        alu_operand_a = register_file[current_thread][src1_reg];
+                        alu_operand_b = register_file[current_thread][src2_reg];
+                    end
+                    `OP_ADDI, `OP_SUBI: begin
+                        alu_operand_a = register_file[current_thread][dest_reg];
+                        alu_operand_b = {{8{immediate[7]}}, immediate}; // Sign extend
+                    end
+                    default: begin
+                        alu_operand_a = 0;
+                        alu_operand_b = 0;
+                    end
+                endcase
+                
+                // Execute instruction
+                case (opcode)
+                    `OP_ADD: begin
+                        register_file[current_thread][dest_reg] <= alu_result;
+                        pc[current_thread] <= pc[current_thread] + 1;
+                    end
+                    
+                    `OP_SUB: begin
+                        register_file[current_thread][dest_reg] <= alu_result;
+                        pc[current_thread] <= pc[current_thread] + 1;
+                    end
+                    
+                    `OP_MUL: begin
+                        register_file[current_thread][dest_reg] <= alu_result;
+                        pc[current_thread] <= pc[current_thread] + 1;
+                    end
+                    
+                    `OP_CMP: begin
+                        cmp_flags[current_thread] <= alu_cmp_flag;
+                        pc[current_thread] <= pc[current_thread] + 1;
+                    end
+                    
+                    `OP_ADDI: begin
+                        register_file[current_thread][dest_reg] <= alu_result;
+                        pc[current_thread] <= pc[current_thread] + 1;
+                    end
+                    
+                    `OP_SUBI: begin
+                        register_file[current_thread][dest_reg] <= alu_result;
+                        pc[current_thread] <= pc[current_thread] + 1;
+                    end
+                    
+                    `OP_JMP: begin
+                        pc[current_thread] <= immediate[3:0];  // Only 4 bits
+                    end
+                    
+                    `OP_JLT: begin
+                        if (cmp_flags[current_thread] == 1) begin
+                            pc[current_thread] <= immediate[3:0];  // Only 4 bits
+                        end else begin
+                            pc[current_thread] <= pc[current_thread] + 1;
+                        end
+                    end
+                    
+                    `OP_LDR: begin
+                        register_file[current_thread][dest_reg] <= data_mem[immediate[3:0]];
+                        pc[current_thread] <= pc[current_thread] + 1;
+                    end
+                    
+                    `OP_STR: begin
+                        data_mem[immediate[3:0]] <= register_file[current_thread][dest_reg];
+                        pc[current_thread] <= pc[current_thread] + 1;
+                    end
+                    
+                    `OP_HALT: begin
+                        next_active_threads[current_thread] = 0;
+                        $display("Thread %0d executing HALT. Halting.", current_thread);
+                    end
+                    
+                    default: begin
+                        $display("Thread %0d encountered undefined opcode %b. No operation performed.", 
+                                current_thread, opcode);
+                        pc[current_thread] <= pc[current_thread] + 1;
+                    end
+                endcase
+                
+                // Logging
+                $display("Time=%0t | Thread=%0d | PC=%0d | Instruction=%h | Opcode=%b | dest=R%0d | src1=R%0d | src2=R%0d | imm=%d", 
+                         $time, current_thread, pc[current_thread], instruction, opcode, 
+                         dest_reg, src1_reg, src2_reg, immediate);
+            end
+            
+            active_threads <= next_active_threads;
+            
+            // Check if all threads have halted
+            if (next_active_threads == 0) begin
+                halt <= 1;
+                $display("All threads have halted at time %0t", $time);
+            end
         end
     end
-
-    //  Simulation Dump
+    
+    // Dump waveforms
     initial begin
         $dumpfile("simulation.vcd");
         $dumpvars(0, compute_core);
     end
-
+    
 endmodule
