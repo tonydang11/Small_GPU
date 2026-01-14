@@ -53,6 +53,10 @@ Data Memory, in contrast, stores the input data required for computation as well
 
 #### 1.3 Core Compute
 
+
+<img width="1106" height="1496" alt="image" src="https://github.com/tonydang11/Small_GPU/blob/main/docs/compute_core_arch.png" />
+
+
 - Compute Core
 The compute core is the central execution unit of the GPU, responsible for coordinating instruction processing, thread execution, and data movement across all internal components.
 
@@ -1653,6 +1657,7 @@ We also thank our classmates and peers for their helpful discussions, suggestion
 Patterson, D. A., & Hennessy, J. L. (2014). Computer organization and design: The hardware/software interface (5th ed.). Morgan Kaufmann.
 
 Maj, A. (n.d.). Tiny-GPU: A simple GPU design [GitHub repository]. https://github.com/adam-maj/tiny-gpu
+
 
 
 
