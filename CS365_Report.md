@@ -293,7 +293,7 @@ The testbench generates a periodic clock signal with a fixed time period and app
 The output signal scheduled_thread is monitored at every rising edge of the clock. The testbench checks whether the scheduler always selects a thread that is marked as active and whether the scheduling behavior remains stable across clock cycles.
 
 By testing multiple active thread patterns and reapplying reset during simulation, the testbench verifies both normal operation and reset recovery behavior of the scheduler. This confirms that the scheduler operates correctly under different runtime conditions.
-...
+
 // testbench/module/fetcher_tb.v
 
 module fetcher_tb;
@@ -347,7 +347,7 @@ module fetcher_tb;
     end
 
 endmodule
-...
+
 #### 2.2 Fetcher Testbench
 The Fetcher Testbench is used to verify the correct instruction fetching behavior based on the program counter (PC) input. The objective of this testbench is to ensure that the fetcher outputs the correct instruction corresponding to each PC value.
 
@@ -961,6 +961,7 @@ All threads have halted at time 800000
 ---
 
 ## IV. Acknowledgements
+
 
 
 
