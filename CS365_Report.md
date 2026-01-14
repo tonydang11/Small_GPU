@@ -47,11 +47,33 @@ Data Memory, in contrast, stores the input data required for computation as well
 
 #### 1.3 Core Compute
 
-* **Instruction Decoder:**
-  The instruction decoder is responsible for analyzing the fetched instruction stream and identifying the required execution parameters. It extracts key fields—including operation codes, operand source identifiers, destination registers, and immediate operands—and forwards this decoded information to the relevant computational units for processing.
+- Compute Core
+The compute core is the central execution unit of the GPU, responsible for coordinating instruction processing, thread execution, and data movement across all internal components.
 
-* **Arithmetic Logic Unit (ALU):**
-  The Arithmetic Logic Unit serves as the primary execution element for arithmetic and logical operations, including but not limited to addition, subtraction, multiplication, and comparison functions. To support parallel execution, each compute unit within the GPU architecture incorporates multiple ALUs, enabling simultaneous processing of multiple operations.
+- Scheduler
+The scheduler selects the next active thread to execute, ensuring fair and controlled execution among multiple threads within the compute core.
+
+- Fetcher
+The fetcher retrieves instructions from instruction memory based on the program counter (PC) of the scheduled thread.
+
+- Decoder
+The decoder interprets fetched instructions by extracting opcode, register indices, and immediate values required for execution.
+
+- Arithmetic Logic Unit (ALU)
+The ALU performs arithmetic and comparison operations such as addition, subtraction, multiplication, and condition evaluation.
+
+- Load/Store Unit (LSU)
+The LSU handles memory access operations, enabling data transfer between registers and global or shared memory.
+
+- Program Counter (PC)
+Each thread maintains its own program counter, tracking the current instruction address and supporting control flow changes such as jumps.
+
+- Register File
+Each thread is associated with a private register file that stores operands and computation results locally.
+
+- Multi-thread Execution Structure
+The compute core supports multiple threads executing the same instruction flow independently, sharing control logic while maintaining separate execution states.
+
 
 #### 1.4 Key Features of GPU Architecture
 
@@ -324,18 +346,7 @@ During simulation, the ALU output reflects the correct arithmetic or comparison 
 
 In this project, a compute core is a simplified processing unit that executes basic instructions such as arithmetic and comparison operations. It represents the smallest functional execution block of the simple GPU model, focusing on clarity and educational purpose rather than performance optimization. The compute core combines instruction control and computation to demonstrate how a GPU processes instructions at a fundamental level.
 
-#### 6.2 Compute Core Architecture
-
-<img width="1106" height="1496" alt="image" src="https://github.com/adam-maj/tiny-gpu/blob/master/docs/images/core.png" />
-
-
-The compute core architecture in this project is organized as a simple and clear instruction processing pipeline. At the top of the compute core, the Scheduler is responsible for selecting which execution context (or thread) is active. This selected context is then passed to the Fetcher, which retrieves the corresponding instruction from instruction memory based on the program counter (PC).
-
-After fetching, the instruction is sent to the Decoder, where it is interpreted into control signals such as opcode, register indices, and execution type. Based on the decoded instruction, the compute core activates one of the functional units, including the Arithmetic Logic Unit (ALU) for computation, the Load/Store Unit (LSU) for memory access, or the Program Counter (PC) logic for control flow updates.
-
-Each execution path is connected to a local Register File, which stores temporary data used during computation. Multiple identical execution blocks are shown in the architecture to represent parallel execution capability, illustrating how a GPU can process multiple instruction streams using the same structure. Overall, this architecture demonstrates how control, computation, and memory access are integrated within a simplified compute core design.
-
-#### 6.3 Compute Core Implementation in Verilog
+#### 6.2 Compute Core Implementation in Verilog
 
 ```
 `include "definitions.vh"
@@ -1635,6 +1646,7 @@ We also thank our classmates and peers for their helpful discussions, suggestion
 Patterson, D. A., & Hennessy, J. L. (2014). Computer organization and design: The hardware/software interface (5th ed.). Morgan Kaufmann.
 
 Maj, A. (n.d.). Tiny-GPU: A simple GPU design [GitHub repository]. https://github.com/adam-maj/tiny-gpu
+
 
 
 
