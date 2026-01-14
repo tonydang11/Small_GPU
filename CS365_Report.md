@@ -317,6 +317,17 @@ The testbench applies a series of directed test cases, each corresponding to a s
 Simulation output is monitored using $monitor, which displays the operation code, input operands, result, and comparison flag in real time. This allows immediate verification of correctness for each ALU operation.
 
 By covering different operation types and operand combinations, the testbench ensures that the ALU produces accurate results and correctly asserts control flags. This confirms that the ALU behaves as expected and is reliable for use in the compute core.
+#### 2.5 Compute Core Testbench
+
+The Compute Core Testbench verifies the overall behavior of the compute core at the system level. Unlike module-level testbenches, this testbench evaluates the interaction between multiple internal components, including instruction execution, register files, and data memory.
+
+The testbench generates a periodic clock signal and applies a single reset pulse to initialize the system. After reset is released, the compute core executes instructions autonomously until the halt signal is asserted.
+
+During simulation, the testbench monitors program counter values for all threads, enabling observation of control flow progression. A timeout mechanism is included to detect potential deadlock conditions in case the halt signal is never asserted.
+
+Once execution completes, the testbench displays final register contents and data memory values for each thread. In addition, performance metrics such as total cycle count and average cycles per thread are reported.
+
+This testbench confirms correct system-level execution, proper thread termination, and overall functional integration of the compute core.
 ### 3. Compute Core Simulation Using Cocotb
 ### 4. Simulation Results and Waveform Analysis
 
@@ -330,6 +341,7 @@ By covering different operation types and operand combinations, the testbench en
 ---
 
 ## IV. Acknowledgements
+
 
 
 
