@@ -203,7 +203,7 @@ The scheduler produces a single output signal, scheduled_thread.
 
 The scheduled_thread output specifies the ID of the thread selected for execution in the current clock cycle. This output is forwarded to the compute core, where it controls instruction fetch, decode, and execution for the selected thread. By generating exactly one thread ID per cycle, the scheduler enforces controlled and orderly execution within the GPU pipeline.
 
-3.3 Internal Operation and Scheduling Logic
+#### 2.3.3 Internal Operation and Scheduling Logic
 
 Internally, the scheduler implements a Round Robin scheduling algorithm. The variable last_thread stores the ID of the thread that was scheduled in the previous clock cycle. This variable enables the scheduler to continue selection from the next thread in sequence, rather than restarting from the first thread each time.
 
@@ -281,6 +281,7 @@ However, because the scheduler does not support priority-based execution, all th
 ---
 
 ## IV. Acknowledgements
+
 
 
 
