@@ -27,6 +27,12 @@ The design of a GPU focuses on supporting large-scale parallel processing and hi
 - **Program Memory Controller and Data Memory Controller**: These units are responsible for regulating instruction and data movement between the compute resources and memory subsystems. By managing memory transactions and synchronizing read/write operations, they help maintain steady data throughput and prevent performance degradation caused by memory access delays.
 
 #### 1.2 Global Memory
+Global memory is a shared memory component in GPU architectures that provides a common address space accessible by all threads. Compared to registers or local memory, global memory offers larger storage capacity but with higher access latency.
+The design of global memory prioritizes simplicity, correctness, and educational clarity rather than performance optimization. All threads access a unified global memory space, and key parameters such as data width and address width are centrally defined to ensure consistency across modules. This design approach improves maintainability, scalability, and ease of integration with other components such as the compute core and scheduler.
+To improve clarity and efficiency in the memory access pipeline, global memory in the Small GPU is logically separated into Program Memory and Data Memory. Program Memory is responsible for storing the instructions executed by the GPU. These instructions are fetched by the instruction fetch unit, decoded, and then dispatched to the compute core. Since program instructions are generally read-only during execution, program memory is optimized for sequential and predictable access patterns, simplifying control logic and reducing potential hazards.
+
+Data Memory, in contrast, stores the input data required for computation as well as the output results produced by executing threads. It is accessed through load (LDR) and store (STR) instructions issued by the compute core. Unlike program memory, data memory must support both read and write operations and handle more irregular access patterns due to concurrent access by multiple threads. This separation between program and data memory reflects common architectural practices and improves conceptual clarity when designing and debugging the system.
+
 #### 1.3 Core Compute
 
 đặt hình ảnh vào đây và giải thích ở dưới nhé
@@ -1503,6 +1509,7 @@ All threads have halted at time 810000
 ---
 
 ## IV. Acknowledgements
+
 
 
 
