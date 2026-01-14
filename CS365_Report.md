@@ -1604,14 +1604,38 @@ All threads have halted at time 810000
 ```
 ---
 
+Development Progress Documentation
+
+• Week 1: Project initiation, GPU architecture research, Verilog syntax learning, and team task allocation.
+
+• Week 2: Development environment setup, high-level architecture design, initial module specifications, and core module implementation.
+
+• Week 3: Module integration, simulation with predefined programs, debugging, and optimization of system components.
+
 ## III. Contribution
 
-### 1. Task Distribution
-### 2. Individual Contributions
+| Member | Task Weight (%) | Details of Contribution |
+|--------|----------------|-------------------------|
+| **1. Lê Ngô Trác Việt** | 20% | Designed and implemented the instruction decoder (`decoder.v`) and ALU (`alu.v`). Conducted an introductory study on GPU architecture and contributed to the overall architectural understanding of the system. |
+| **2. Nguyễn Minh Việt** | 20% | Implemented the scheduler module, instruction memory, input memory, and system definitions. Supported the integration of memory-related components. |
+| **3. Đặng Hoàng Tân** | 20% | Developed the compute core module, ensuring correct interaction between execution units and other system components. |
+| **4. Bùi Xuân Thái** | 20% | Created and maintained testbenches for system modules, verifying correctness and compatibility during simulation. |
+| **5. Vũ Quang Huy** | 20% | Collaborated on building comprehensive testbenches for all modules, ensuring stable simulation results and functional verification. |
+
 
 ---
 
 ## IV. Acknowledgements
+We would like to express our sincere gratitude to Dr. Nguyen Dinh Han for his invaluable guidance, constructive feedback, and continuous support throughout the development of this project. His expertise in computer architecture and hardware design provided essential direction and greatly contributed to the successful completion of this work.
+
+We also thank our classmates and peers for their helpful discussions, suggestions, and assistance during the design, implementation, and testing phases of the project.
+
+
+## V. Reference
+Patterson, D. A., & Hennessy, J. L. (2014). Computer organization and design: The hardware/software interface (5th ed.). Morgan Kaufmann.
+
+Maj, A. (n.d.). Tiny-GPU: A simple GPU design [GitHub repository]. https://github.com/adam-maj/tiny-gpu
+
 
 
 
