@@ -246,9 +246,41 @@ However, because the scheduler does not support priority-based execution, all th
 #### 3.3 Interface and Control Signals
 
 ### 4. Instruction Fetcher Module
-#### 4.1 Instruction Fetch Mechanism
+#### 4.1 Instruction Fetch Concept and Mechanism
+The instruction fetcher is responsible for retrieving instructions from instruction memory based on the current program counter value. In this simple GPU design, the fetcher does not perform any computation or control decisions; instead, it acts as a read-only interface between the compute core and the instruction memory. At each execution cycle, the fetcher receives a program counter value from the compute core and outputs the corresponding instruction. This design keeps the fetch stage simple and allows instruction sequencing to be fully controlled by the compute core logic.
 #### 4.2 Program Counter Management
-#### 4.3 Interaction with Instruction Memory
+The fetcher does not manage or update the program counter internally. The program counter is maintained by the compute core on a per-thread basis and reflects the current execution position of each thread. The fetcher only uses the provided program counter value to access instruction memory. Any updates to the program counter, such as sequential execution or branching, are handled outside the fetcher, ensuring a clear separation between instruction fetching and control flow logic.
+#### 4.3 Fetcher Source Code
+```
+`include "definitions.vh"
+
+module fetcher (
+    input [3:0] pc_in,  // 4-bit PC for 16 entries
+    output [`DATA_WIDTH-1:0] instruction
+);
+    // Instruction memory - 16 entries
+    reg [`DATA_WIDTH-1:0] instr_mem [0:15];
+    
+    integer i;  // Declare at module level
+    
+    // Non-pipelined fetch - combinational read
+    assign instruction = instr_mem[pc_in];
+    
+    // Initialize instruction memory
+    initial begin
+        $readmemh("src/instruction_memory.mem", instr_mem);
+        $display("Instruction Memory Initialized in Fetcher:");
+        for (i = 0; i < 16; i = i + 1) begin
+            $display("instr_mem[%0d] = %h", i, instr_mem[i]);
+        end
+    end
+    
+endmodule
+```
+#### 4.4 Code Explanation
+The fetcher module reads an instruction from instruction memory based on the current program counter value. Instruction memory is implemented as a small register array and is accessed using combinational logic, allowing the instruction output to change immediately when the program counter changes. The instruction memory is initialized from an external file at simulation start, enabling flexible program loading without modifying the source code. Overall, the fetcher contains no control or state logic and relies entirely on the compute core to manage instruction flow.
+#### 4.5 Result Observation
+The simulation output shows the sequence of fetched instructions corresponding to the program counter values, confirming that the fetcher correctly retrieves instructions from instruction memory. The printed instruction contents verify that the memory is initialized properly and that instruction addressing works as expected. This observation demonstrates that the fetch stage functions correctly as the entry point of the compute core execution pipeline.
 
 ### 5. Instruction Decoder Module
 #### 5.1 Instruction Format
@@ -1511,6 +1543,7 @@ All threads have halted at time 810000
 ---
 
 ## IV. Acknowledgements
+
 
 
 
