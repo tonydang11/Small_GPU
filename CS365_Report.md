@@ -135,6 +135,90 @@ Implemented as combinational logic (always @(*)), the decoder assigns instructio
 
 
 ### 2. Scheduler in GPU
+#### 2.1 Concept of the Scheduler
+
+In parallel processing architectures such as Graphics Processing Units (GPUs), multiple threads are executed concurrently to improve computational throughput. However, because the number of execution units is limited, not all threads can be executed simultaneously in every clock cycle. Therefore, a scheduler is required to manage the execution order of threads and allocate computational resources efficiently.
+
+In the Small GPU project, the scheduler is designed to select exactly one active thread per clock cycle and dispatch it to the compute core. The scheduler follows a Round Robin scheduling policy, in which threads are executed in a cyclic order. This approach ensures fairness by giving each active thread an equal opportunity to execute and prevents starvation. Additionally, the scheduler supports interleaved multithreading, allowing the GPU to hide latency caused by memory access or long-latency operations, thereby improving overall system throughput.
+
+#### 2.2 Verilog Implementation of the Scheduler
+
+The scheduler is implemented as a Verilog module and relies on shared architectural parameters defined in definitions.vh, such as the number of threads and the width of thread identifiers. The complete implementation of the scheduler module is shown below.
+```
+`include "definitions.vh"
+
+module scheduler #(
+    parameter NUM_THREADS = `NUM_THREADS
+)(
+    input clk,
+    input reset,
+    input [NUM_THREADS-1:0] active_threads,
+    output reg [`THREAD_ID_WIDTH-1:0] scheduled_thread
+);
+    integer last_thread; 
+    integer i;           
+    integer thread;      
+    reg thread_found;    
+
+    always @(posedge clk or posedge reset) begin
+        if (reset) begin
+            last_thread <= -1;
+            scheduled_thread <= 0;
+        end else begin
+            thread_found = 0;
+            
+            // Iterate through all threads using Round Robin
+            for (i = 1; i <= NUM_THREADS; i = i + 1) begin
+                thread = (last_thread + i) % NUM_THREADS;
+                
+                // Select the first active thread found
+                if (active_threads[thread] && !thread_found) begin
+                    scheduled_thread <= thread;
+                    last_thread <= thread;
+                    thread_found = 1;
+                end
+            end
+        end
+    end
+endmodule
+```
+
+#### 2.3 Explanation of the Scheduler Operation
+
+To clearly describe the behavior of the scheduler, this section is organized into inputs, outputs, and internal operation, following the logical data flow of the module.
+
+#### 2.3.1 Inputs
+
+The scheduler receives three input signals: clk, reset, and active_threads.
+
+The clk signal is the system clock that determines when scheduling decisions are made. The scheduler updates its internal state and selects a new thread only on the rising edge of the clock, ensuring synchronous and deterministic behavior.
+
+The reset signal initializes the scheduler to a known state. When reset is asserted, the scheduler clears its internal state by setting the previously scheduled thread to an invalid value and initializing the output thread ID. This guarantees correct behavior during system startup or reset conditions.
+
+The active_threads signal is a bitmask representing the execution status of all threads. Each bit corresponds to one thread: a value of 1 indicates that the thread is active and eligible for scheduling, while a value of 0 indicates that the thread has halted or completed execution. This input prevents inactive threads from being scheduled.
+
+#### 2.3.2 Output
+
+The scheduler produces a single output signal, scheduled_thread.
+
+The scheduled_thread output specifies the ID of the thread selected for execution in the current clock cycle. This output is forwarded to the compute core, where it controls instruction fetch, decode, and execution for the selected thread. By generating exactly one thread ID per cycle, the scheduler enforces controlled and orderly execution within the GPU pipeline.
+
+3.3 Internal Operation and Scheduling Logic
+
+Internally, the scheduler implements a Round Robin scheduling algorithm. The variable last_thread stores the ID of the thread that was scheduled in the previous clock cycle. This variable enables the scheduler to continue selection from the next thread in sequence, rather than restarting from the first thread each time.
+
+Upon reset, last_thread is initialized to -1, allowing the scheduler to begin scheduling from thread 0 during the first active cycle. During normal operation, the scheduling logic executes inside an always block triggered on the rising edge of the clock.
+
+At each cycle, the scheduler iterates through all threads using a for loop. The expression (last_thread + i) % NUM_THREADS ensures a circular search order, which is the core mechanism of the Round Robin policy. The scheduler checks each candidate thread’s corresponding bit in active_threads to determine whether it is active.
+
+The control flag thread_found ensures that only one thread is selected per clock cycle. Once an active thread is found, the scheduler updates scheduled_thread, records the selected thread in last_thread, and prevents further selections in the same cycle. This mechanism guarantees fairness, prevents starvation, and maintains low hardware complexity.
+
+#### 2.3 Results and Observations
+
+Simulation results show that the scheduler correctly implements Round Robin scheduling. All active threads are executed in a cyclic order, and no thread experiences starvation as long as it remains active. When some threads stall due to memory access latency, other active threads continue to be scheduled, demonstrating effective interleaved multithreading.
+
+However, because the scheduler does not support priority-based execution, all threads are treated equally regardless of workload characteristics. In scenarios with unbalanced workloads or latency-sensitive tasks, this may result in suboptimal performance. Despite this limitation, the simplicity, fairness, and low hardware overhead of the design make it well suited for the Small GPU project and educational purposes.
+
 ### 3. Fetcher in GPU
 ### 4. Decoder in GPU
 ### 5. ALU in GPU
@@ -197,6 +281,7 @@ Implemented as combinational logic (always @(*)), the decoder assigns instructio
 ---
 
 ## IV. Acknowledgements
+
 
 
 
