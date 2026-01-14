@@ -294,6 +294,16 @@ The output signal scheduled_thread is monitored at every rising edge of the cloc
 
 By testing multiple active thread patterns and reapplying reset during simulation, the testbench verifies both normal operation and reset recovery behavior of the scheduler. This confirms that the scheduler operates correctly under different runtime conditions.
 
+
+#### 2.2 Fetcher Testbench
+The Fetcher Testbench is used to verify the correct instruction fetching behavior based on the program counter (PC) input. The objective of this testbench is to ensure that the fetcher outputs the correct instruction corresponding to each PC value.
+
+In the testbench, the program counter input is driven with a sequence of increasing values. Although the testbench uses a 16-bit PC signal, only the lower bits are connected to the fetcher module, matching the actual design interface. This verifies that the fetcher correctly interprets the effective PC width.
+
+For each applied PC value, the output instruction is monitored and displayed using $display. This allows direct observation of the mapping between PC addresses and fetched instructions during simulation.
+
+By sweeping through all valid PC values within the supported range, the testbench confirms that the fetcher correctly accesses instruction memory and produces stable, deterministic outputs. This ensures reliable instruction delivery for subsequent pipeline stages.
+
 // testbench/module/fetcher_tb.v
 
 module fetcher_tb;
@@ -348,14 +358,6 @@ module fetcher_tb;
 
 endmodule
 
-#### 2.2 Fetcher Testbench
-The Fetcher Testbench is used to verify the correct instruction fetching behavior based on the program counter (PC) input. The objective of this testbench is to ensure that the fetcher outputs the correct instruction corresponding to each PC value.
-
-In the testbench, the program counter input is driven with a sequence of increasing values. Although the testbench uses a 16-bit PC signal, only the lower bits are connected to the fetcher module, matching the actual design interface. This verifies that the fetcher correctly interprets the effective PC width.
-
-For each applied PC value, the output instruction is monitored and displayed using $display. This allows direct observation of the mapping between PC addresses and fetched instructions during simulation.
-
-By sweeping through all valid PC values within the supported range, the testbench confirms that the fetcher correctly accesses instruction memory and produces stable, deterministic outputs. This ensures reliable instruction delivery for subsequent pipeline stages.
 #### 2.3 Decoder Testbench
 The Decoder Testbench verifies the correctness of instruction decoding by ensuring that each field within the instruction word is properly extracted. The decoder splits a 16-bit instruction into multiple components, including opcode, destination register, source registers, and immediate value.
 
@@ -961,6 +963,7 @@ All threads have halted at time 800000
 ---
 
 ## IV. Acknowledgements
+
 
 
 
