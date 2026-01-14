@@ -340,7 +340,7 @@ The hardware design includes the Compute Core and its supporting modules, such a
 
 The hardware design is compiled using Icarus Verilog, while Cocotb orchestrates the simulation by generating the clock signal, applying the reset sequence, and supervising program execution.
 
-### 4. Simulation Results
+### 4. Simulation Result
 ```
 tandang@MacBook-Pro-cua-Tan Small_GPU % make SIM=icarus WAVES=1
 
@@ -433,6 +433,7 @@ All threads have halted at time 800000
 ---
 
 ## IV. Acknowledgements
+
 
 
 
