@@ -98,7 +98,7 @@ The ALU (Arithmetic Logic Unit) executes arithmetic and comparison operations ba
 
 The module is implemented as combinational logic using always @(*). Both result and cmp_flag are initialized to zero to avoid unintended latches. Arithmetic operations OP_ADD, OP_SUB, OP_MUL directly compute and assign the result. The OP_CMP instruction performs a comparison only; if operand_a is less than operand_b, cmp_flag is asserted. All unsupported opcodes are handled by the default case, which forces the result to zero.
 #### 3.2 Testbench for ALU 
-#### 3.3 ALU Input and Output Interface
+
 
 .... fetcher
 
@@ -197,6 +197,7 @@ Implemented as combinational logic (always @(*)), the decoder assigns instructio
 ---
 
 ## IV. Acknowledgements
+
 
 
 
