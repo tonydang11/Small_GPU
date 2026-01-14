@@ -12,6 +12,12 @@ This project presents the design and simulation of a simplified GPU architecture
 </div>
 <div style="page-break-after: always;"></div>
 
+## Table of Contents
+I. Program Documentation
+II. Testbench Documentation
+III. Contribution
+IV. Acknowledges
+
 
 ## I. Program Documentation
 
@@ -1657,6 +1663,7 @@ We also thank our classmates and peers for their helpful discussions, suggestion
 Patterson, D. A., & Hennessy, J. L. (2014). Computer organization and design: The hardware/software interface (5th ed.). Morgan Kaufmann.
 
 Maj, A. (n.d.). Tiny-GPU: A simple GPU design [GitHub repository]. https://github.com/adam-maj/tiny-gpu
+
 
 
 
