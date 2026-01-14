@@ -303,7 +303,7 @@ In the testbench, the program counter input is driven with a sequence of increas
 For each applied PC value, the output instruction is monitored and displayed using $display. This allows direct observation of the mapping between PC addresses and fetched instructions during simulation.
 
 By sweeping through all valid PC values within the supported range, the testbench confirms that the fetcher correctly accesses instruction memory and produces stable, deterministic outputs. This ensures reliable instruction delivery for subsequent pipeline stages.
-
+```
 // testbench/module/fetcher_tb.v
 
 module fetcher_tb;
@@ -357,7 +357,7 @@ module fetcher_tb;
     end
 
 endmodule
-
+```
 #### 2.3 Decoder Testbench
 The Decoder Testbench verifies the correctness of instruction decoding by ensuring that each field within the instruction word is properly extracted. The decoder splits a 16-bit instruction into multiple components, including opcode, destination register, source registers, and immediate value.
 
@@ -963,6 +963,7 @@ All threads have halted at time 800000
 ---
 
 ## IV. Acknowledgements
+
 
 
 
