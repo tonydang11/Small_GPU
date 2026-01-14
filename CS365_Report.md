@@ -328,9 +328,9 @@ During simulation, the testbench monitors program counter values for all threads
 Once execution completes, the testbench displays final register contents and data memory values for each thread. In addition, performance metrics such as total cycle count and average cycles per thread are reported.
 
 This testbench confirms correct system-level execution, proper thread termination, and overall functional integration of the compute core.
-### 3. Compute Core Simulation Using Cocotb
-#### 3.1 Compute Core Testbench
-The Compute Core represents the primary execution engine of the GPU, responsible for instruction processing, multi-threaded scheduling, arithmetic operations, memory access, and control flow. As all major GPU functionalities converge at the Compute Core, its successful verification provides strong evidence of the correctness of the overall GPU operation. Consequently, validating the Compute Core through simulation effectively demonstrates the functional behavior of the GPU architecture as a whole.
+### 3. GPU Simulation Using Cocotb
+#### 3.1 The role of Compute Core
+As mentioned, The Compute Core represents the primary execution engine of the GPU, responsible for instruction processing, multi-threaded scheduling, arithmetic operations, memory access, and control flow. As all major GPU functionalities converge at the Compute Core, its successful verification provides strong evidence of the correctness of the overall GPU operation. Consequently, validating the Compute Core through simulation effectively demonstrates the functional behavior of the GPU architecture as a whole.
 #### 3.2 Simulation Framework Overview
 To verify the Compute Core and, by extension, the GPU’s operational behavior, the design is simulated using Cocotb, a Python-based verification framework, together with the Icarus Verilog simulator. This environment enables high-level, programmable test scenarios while preserving cycle-accurate interaction with the hardware description.
 
@@ -338,7 +338,391 @@ The simulation framework integrates the GPU hardware modules, memory initializat
 #### 3.3 Simulation Architecture and Setup
 The hardware design includes the Compute Core and its supporting modules, such as the scheduler, fetcher, decoder, and arithmetic logic unit (ALU). An external Python-based assembler translates assembly programs into machine-code memory images, which are loaded into the instruction memory prior to simulation. Data memory is initialized from a hexadecimal file and shared across all executing threads.
 
-The hardware design is compiled using Icarus Verilog, while Cocotb orchestrates the simulation by generating the clock signal, applying the reset sequence, and supervising program execution.
+The hardware design is compiled using Icarus Verilog, while Cocotb orchestrates the simulation by generating the clock signal, applying the reset sequence, and supervising program execution. This integrated environment enables end-to-end verification of the compute core and demonstrates the fundamental operational behavior of the GPU.
+
+To realize this simulation flow, three main components are used: the Python assembler, the assembly-level test program, and the Cocotb testbench. The assembler generates the instruction memory image, the test program defines the workload executed by the GPU, and the Cocotb testbench controls and observes the simulation.
+##### 3.3.1 Python Assembler
+```
+# Python program to convert assembly code to instructions fitting for the gpu at instruction_memory.mem
+
+import sys
+import re
+
+# Define opcode mappings
+opcode_map = {
+    'ADD': '0000',
+    'SUB': '0001',
+    'MUL': '0010',
+    'CMP': '0011',
+    'JMP': '0100',
+    'JLT': '0101',  # Jump if Less Than
+    'LDRI': '0110',  # Load Immediate
+    'LDR': '0110',   # Load from Memory
+    'STR': '0111',
+    'HALT': '1111',
+}
+
+# Define register mappings (R0 to R15)
+register_map = {f'R{i}': f'{i:04b}' for i in range(16)}
+
+def assemble_instruction(parts, labels, definitions):
+    if not parts:
+        return None
+    opcode = parts[0].upper()
+    opcode_bin = opcode_map.get(opcode, None)
+    if opcode_bin is None:
+        print(f"Unknown opcode: {opcode}")
+        return None
+
+    if opcode in ['HALT']:
+        # HALT has no operands
+        return opcode_bin + '0000' + '00000000'
+
+    elif opcode in ['LDR', 'STR']:
+        # LDR dest_reg, [address]
+        # STR src_reg, [address]
+        if len(parts) != 3:
+            print(f"Incorrect number of operands for {opcode}: {parts}")
+            return None
+        reg = parts[1].rstrip(',').upper()
+        operand = parts[2].strip('[]').upper()
+        # Resolve operand (address)
+        if operand in labels:
+            address = labels[operand]
+        elif operand in definitions:
+            address = definitions[operand]
+        else:
+            try:
+                if operand.startswith('0x') or operand.startswith('0X'):
+                    address = int(operand, 16)
+                else:
+                    address = int(operand)
+            except ValueError:
+                print(f"Invalid operand address: {operand}")
+                return None
+        dest_reg_bin = register_map.get(reg, '0000')
+        immediate_bin = f'{address & 0xFF:08b}'  # 8-bit immediate
+        return opcode_bin + dest_reg_bin + immediate_bin
+
+    elif opcode in ['ADD', 'SUB', 'MUL', 'CMP']:
+        # ADD dest_reg, src_reg, immediate
+        if len(parts) != 4:
+            print(f"Incorrect number of operands for {opcode}: {parts}")
+            return None
+        dest_reg = parts[1].rstrip(',').upper()
+        src_reg = parts[2].rstrip(',').upper()
+        immediate = parts[3].upper()
+        # Resolve immediate
+        if immediate in labels:
+            imm_value = labels[immediate]
+        elif immediate in definitions:
+            imm_value = definitions[immediate]
+        else:
+            try:
+                if immediate.startswith('#'):
+                    imm_value = int(immediate[1:])
+                elif immediate.startswith('0x') or immediate.startswith('0X'):
+                    imm_value = int(immediate, 16)
+                else:
+                    imm_value = int(immediate)
+            except ValueError:
+                print(f"Invalid immediate value: {immediate}")
+                return None
+        dest_reg_bin = register_map.get(dest_reg, '0000')
+        src_reg_bin = register_map.get(src_reg, '0000')
+        immediate_bin = f'{imm_value & 0x0F:04b}'  # 4-bit immediate
+        return opcode_bin + dest_reg_bin + src_reg_bin + immediate_bin
+
+    elif opcode in ['JMP', 'JLT']:
+        # JMP label
+        # JLT label
+        if len(parts) != 2:
+            print(f"Incorrect number of operands for {opcode}: {parts}")
+            return None
+        label = parts[1].upper()
+        if label in labels:
+            address = labels[label]
+        elif label in definitions:
+            address = definitions[label]
+        else:
+            try:
+                if label.startswith('0x') or label.startswith('0X'):
+                    address = int(label, 16)
+                else:
+                    address = int(label)
+            except ValueError:
+                print(f"Invalid jump address: {label}")
+                return None
+        # For JMP and JLT, use a special register or ignore
+        dest_reg_bin = '0000'  # Assuming no destination register for jumps
+        immediate_bin = f'{address & 0xFF:08b}'
+        return opcode_bin + dest_reg_bin + immediate_bin
+
+    elif opcode in ['LDRI']:
+        # LDRI dest_reg, immediate
+        if len(parts) != 3:
+            print(f"Incorrect number of operands for {opcode}: {parts}")
+            return None
+        dest_reg = parts[1].rstrip(',').upper()
+        immediate = parts[2].upper()
+        # Resolve immediate
+        if immediate in labels:
+            imm_value = labels[immediate]
+        elif immediate in definitions:
+            imm_value = definitions[immediate]
+        else:
+            try:
+                if immediate.startswith('#'):
+                    imm_value = int(immediate[1:])
+                elif immediate.startswith('0x') or immediate.startswith('0X'):
+                    imm_value = int(immediate, 16)
+                else:
+                    imm_value = int(immediate)
+            except ValueError:
+                print(f"Invalid immediate value: {immediate}")
+                return None
+        dest_reg_bin = register_map.get(dest_reg, '0000')
+        immediate_bin = f'{imm_value & 0xFF:08b}'  # 8-bit immediate
+        return opcode_bin + dest_reg_bin + immediate_bin
+
+    else:
+        print(f"Unhandled opcode: {opcode}")
+        return None
+
+def assemble(lines):
+    labels = {}
+    definitions = {}
+    machine_code = []
+    address = 0
+
+    # First pass: collect labels and definitions
+    for line in lines:
+        line = line.strip()
+        # Remove comments
+        line = re.split(r'#|//', line)[0].strip()
+        if not line:
+            continue
+        # Handle .define
+        if line.startswith('.define'):
+            parts = line.split()
+            if len(parts) != 3:
+                print(f"Invalid .define directive: {line}")
+                continue
+            _, name, value = parts
+            try:
+                if value.startswith('0x') or value.startswith('0X'):
+                    definitions[name.upper()] = int(value, 16)
+                else:
+                    definitions[name.upper()] = int(value)
+            except ValueError:
+                print(f"Invalid .define value: {line}")
+            continue
+        # Handle labels
+        if line.endswith(':'):
+            label = line[:-1].upper()
+            labels[label] = address
+            continue
+        # Otherwise, it's an instruction
+        address += 1
+
+    # Second pass: assemble instructions
+    address = 0
+    for line in lines:
+        original_line = line
+        line = line.strip()
+        # Remove comments
+        line = re.split(r'#|//', line)[0].strip()
+        if not line:
+            continue
+        # Handle .define
+        if line.startswith('.define'):
+            continue
+        # Handle labels
+        if line.endswith(':'):
+            continue
+        # Split instruction into parts
+        parts = re.split(r'[,\s]+', line)
+        instruction_bin = assemble_instruction(parts, labels, definitions)
+        if instruction_bin:
+            instruction_hex = f'{int(instruction_bin, 2):04X}'
+            machine_code.append(instruction_hex)
+            address +=1
+    return machine_code
+
+def main():
+    if len(sys.argv) < 2:
+        print("Usage: python assembler.py assembly_code.asm")
+        return
+
+    asm_file = sys.argv[1]
+    with open(asm_file, 'r') as f:
+        lines = f.readlines()
+
+    machine_code = assemble(lines)
+    with open('instruction_memory.mem', 'w') as f:
+        for code in machine_code:
+            f.write(code + '\n')
+
+    print("Assembly complete. Machine code written to instruction_memory.mem.")
+
+if __name__ == '__main__':
+    main()
+
+```
+##### 3.3.2 Assembly Test Program
+```
+// A program written in assembly that can be translated into instructions at instruction_memory.mem to create test case
+
+.define MAX_ITER 16
+.define THRESHOLD 1024
+.define VALUE_C_REAL 10
+.define VALUE_C_IMAG 10
+.define X_INIT 0
+.define Y_INIT 0
+.define Z_REAL_INIT 0
+.define Z_IMAG_INIT 0
+.define MAX_X 16
+.define MAX_Y 16
+
+
+LDRI R11, [MAX_ITER]      
+LDRI R12, [THRESHOLD]     
+
+
+LDRI R1, [Y_INIT]         
+
+LOOP_Y:
+    CMP R1, [MAX_Y]        
+    JLT LOOP_Y_BODY        
+    JMP END_PROGRAM        
+
+LOOP_Y_BODY:
+    
+    LDRI R0, [X_INIT]      
+
+LOOP_X:
+    CMP R0, [MAX_X]        
+    JLT LOOP_X_BODY        
+    ADD R1, R1, #1         
+    JMP LOOP_Y             
+
+LOOP_X_BODY:
+    
+    LDRI R4, [VALUE_C_REAL] 
+    LDRI R5, [VALUE_C_IMAG] 
+
+    
+    LDRI R2, [Z_REAL_INIT] 
+    LDRI R3, [Z_IMAG_INIT] 
+
+    
+    LDRI R10, [ITER_INIT]  
+
+LOOP_MANDEL:
+    
+    MUL R6, R2, R2          
+    
+    MUL R7, R3, R3          
+    
+    MUL R8, R2, R3          
+    ADD R8, R8, #0          
+
+    
+    SUB R2, R6, R7          
+    ADD R2, R2, R4          
+
+    
+    ADD R3, R8, R5          
+
+    
+    ADD R9, R6, R7          
+
+    
+    CMP R9, R12             
+    JLT CONTINUE_ITER       
+
+    
+    
+    MUL R14, R1, #16        
+    ADD R14, R14, R0        
+
+    
+    STR R10, [R14]          
+
+    
+    ADD R0, R0, #1
+    JMP LOOP_X              
+
+CONTINUE_ITER:
+    
+    ADD R10, R10, #1
+
+    
+    CMP R10, R11
+    JLT LOOP_MANDEL         
+
+    
+    
+    MUL R14, R1, #16        
+    ADD R14, R14, R0        
+
+    
+    STR R10, [R14]          
+
+    
+    ADD R0, R0, #1
+    JMP LOOP_X              
+
+END_PROGRAM:
+    HALT                    
+
+```
+##### 3.3.3 Assembly Test Program
+```
+# testbench/test_matadd_simple.py
+
+import cocotb
+from cocotb.triggers import RisingEdge
+from cocotb.clock import Clock
+
+@cocotb.test()
+async def test_matadd_simple(dut):
+    """
+    Simplified Testbench for Matrix Addition on GPU Simulation using Cocotb.
+    """
+
+    # 1. Create a 10 ns period clock on port clk
+    clock = Clock(dut.clk, 10, units="ns")  # 10 ns period
+    cocotb.start_soon(clock.start())
+    dut.reset.value = 1
+    cocotb.log.info("Clock started with 10 ns period. Asserting reset.")
+
+    # 2. Initialize reset
+    await RisingEdge(dut.clk)
+    dut.reset.value = 0
+    cocotb.log.info("Deasserting reset.")
+    await RisingEdge(dut.clk)
+
+    # 3. Wait for 'halt' signal or timeout after max_cycles
+    cocotb.log.info("Waiting for 'halt' signal.")
+    max_cycles = 1000            # Maximum number of clock cycles to wait
+    cycle = 0
+
+    while dut.halt.value != 1 and cycle < max_cycles:
+        await RisingEdge(dut.clk)
+        cycle += 1
+        if cycle % 100 == 0:
+            cocotb.log.info(f"Cycle {cycle}: 'halt' not yet asserted.")
+
+    # 4. Check if 'halt' was asserted
+    if dut.halt.value != 1:
+        cocotb.log.error(f"Test FAILED: 'halt' signal not asserted after {max_cycles} cycles.")
+        assert False, f"'halt' not asserted after {max_cycles} cycles."
+    else:
+        cocotb.log.info(f"Test PASSED: 'halt' signal asserted after {cycle} cycles.")
+        assert True
+
+```
 
 ### 4. Simulation Result
 ```
@@ -433,6 +817,7 @@ All threads have halted at time 800000
 ---
 
 ## IV. Acknowledgements
+
 
 
 
