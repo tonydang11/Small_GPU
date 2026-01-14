@@ -1,12 +1,10 @@
-# -----------------------------------------------
 <div align="center">
 
 # Project
+# Implementation of a Small GPU Using Verilog
 
 </div>
 
-# Implementation of a Small GPU Using Verilog
-# -----------------------------------------------
 
 <div align="center">
 
@@ -1613,6 +1611,7 @@ All threads have halted at time 810000
 ---
 
 ## IV. Acknowledgements
+
 
 
 
