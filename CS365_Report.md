@@ -37,7 +37,8 @@ Through the implementation and simulation of these components, this project prov
 ### 1.1 GPU Architecture
 The design of a GPU focuses on supporting large-scale parallel processing and high computational bandwidth. This is accomplished through the integration of many functional components that work together to execute operations in an efficient manner.
 
-<img width="1106" height="1496" alt="image" src="https://github.com/user-attachments/assets/3d4e978b-55fa-499b-8422-cb2f6b6bd006" />
+<img width="812" height="709" alt="compute_core_arch" src="https://github.com/user-attachments/assets/ce607b88-4038-4130-a2c9-7f1db8ca6b3b" />
+
 
 
 - **Device Control Register**: This unit is responsible for controlling and configuring the operational state of the GPU. It enables the host system to manage GPU execution and monitor its status.
@@ -1664,6 +1665,7 @@ We also thank our classmates and peers for their helpful discussions, suggestion
 Patterson, D. A., & Hennessy, J. L. (2014). Computer organization and design: The hardware/software interface (5th ed.). Morgan Kaufmann.
 
 Maj, A. (n.d.). Tiny-GPU: A simple GPU design [GitHub repository]. https://github.com/adam-maj/tiny-gpu
+
 
 
 
