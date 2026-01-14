@@ -213,7 +213,7 @@ At each cycle, the scheduler iterates through all threads using a for loop. The 
 
 The control flag thread_found ensures that only one thread is selected per clock cycle. Once an active thread is found, the scheduler updates scheduled_thread, records the selected thread in last_thread, and prevents further selections in the same cycle. This mechanism guarantees fairness, prevents starvation, and maintains low hardware complexity.
 
-#### 2.3 Results and Observations
+#### 2.4 Results and Observations
 
 Simulation results show that the scheduler correctly implements Round Robin scheduling. All active threads are executed in a cyclic order, and no thread experiences starvation as long as it remains active. When some threads stall due to memory access latency, other active threads continue to be scheduled, demonstrating effective interleaved multithreading.
 
@@ -281,6 +281,7 @@ However, because the scheduler does not support priority-based execution, all th
 ---
 
 ## IV. Acknowledgements
+
 
 
 
