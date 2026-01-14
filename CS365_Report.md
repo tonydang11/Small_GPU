@@ -28,7 +28,112 @@ The design of a GPU focuses on supporting large-scale parallel processing and hi
 
 #### 1.2 Global Memory
 #### 1.3 Core Compute
+
+đặt hình ảnh vào đây và giải thích ở dưới nhé
+
+
+* **Instruction Decoder:**
+  The instruction decoder is responsible for analyzing the fetched instruction stream and identifying the required execution parameters. It extracts key fields—including operation codes, operand source identifiers, destination registers, and immediate operands—and forwards this decoded information to the relevant computational units for processing.
+
+* **Arithmetic Logic Unit (ALU):**
+  The Arithmetic Logic Unit serves as the primary execution element for arithmetic and logical operations, including but not limited to addition, subtraction, multiplication, and comparison functions. To support parallel execution, each compute unit within the GPU architecture incorporates multiple ALUs, enabling simultaneous processing of multiple operations.
+
+
 #### 1.4 Key Features of GPU Architecture
+
+The GPU architecture is characterized by several key features that enable high computational performance:
+
+1. **Massive Parallelism:**
+   GPUs are composed of a large number of lightweight processing cores that execute thousands of threads concurrently. This design supports data-parallel workloads and follows a SIMD/SIMT execution model, allowing the same instruction to be applied to multiple data elements simultaneously.
+
+2. **Scalability:**
+   The modular organization of GPU architecture allows performance to scale by increasing the number of Compute Cores and execution units. This scalability makes GPUs adaptable to a wide range of performance requirements and application domains.
+
+3. **Energy Efficiency:**
+   GPUs are designed to maximize computational throughput per watt of power consumed. By executing many parallel operations with simple cores and efficient scheduling, GPUs achieve higher energy efficiency compared to general-purpose processors for parallel workloads.
+
+4. **Thread Management and Scheduling:**
+   Thread execution is efficiently controlled through hardware-based scheduling mechanisms. The Scheduler and Dispatcher coordinate thread allocation and context switching, enabling effective workload distribution and hiding memory latency by switching between active threads.
+
+5. **Memory Hierarchy and Bandwidth:**
+   GPUs employ a hierarchical memory system, including registers, cache, and global memory, to optimize data access. High memory bandwidth and fast on-chip storage reduce access latency and support sustained throughput for memory-intensive applications.
+### 3. Arithmetic Logic Unit (ALU)
+
+The Arithmetic Logic Unit (ALU) represents a fundamental execution block within processor architectures, including Graphics Processing Units. Its primary function is to carry out arithmetic and logical computations on provided operands, thereby producing the results of computational operations. In this project, the ALU is modeled to support a set of core functionalities, including addition, subtraction, multiplication, and comparison. The simulation of these operations provides insight into the role of the ALU and its interaction with input operands throughout the GPU computation workflow.
+
+#### 3.1 Alu replication description 
+```
+// alu.v
+`include "definitions.vh"
+
+
+module alu (
+    input [3:0] opcode,
+    input [`DATA_WIDTH-1:0] operand_a,
+    input [`DATA_WIDTH-1:0] operand_b,
+    output reg [`DATA_WIDTH-1:0] result,
+    output reg cmp_flag
+);
+    always @(*) begin
+        cmp_flag = 0;
+        result = 0;
+        case (opcode)
+            `OP_ADD: result = operand_a + operand_b;
+            `OP_SUB: result = operand_a - operand_b;
+            `OP_MUL: result = operand_a * operand_b;
+            `OP_CMP: begin
+                if (operand_a < operand_b)
+                    cmp_flag = 1;
+                else
+                    cmp_flag = 0;
+            end
+   
+            default: result = 0;
+        endcase
+    end
+endmodule
+```
+
+The ALU (Arithmetic Logic Unit) executes arithmetic and comparison operations based on a 4-bit opcode. It accepts two DATA_WIDTH (16-bit) operands, operand_a and operand_b, and produces a computation result along with a comparison flag cmp_flag.
+
+The module is implemented as combinational logic using always @(*). Both result and cmp_flag are initialized to zero to avoid unintended latches. Arithmetic operations OP_ADD, OP_SUB, OP_MUL directly compute and assign the result. The OP_CMP instruction performs a comparison only; if operand_a is less than operand_b, cmp_flag is asserted. All unsupported opcodes are handled by the default case, which forces the result to zero.
+#### 3.2 Testbench for ALU 
+#### 3.3 ALU Input and Output Interface
+
+.... fetcher
+
+### 5. Instruction Decoder Module
+During GPU instruction execution, the decoding stage constitutes the initial step in the processing pipeline. Instructions are represented in a binary format, and the decoder extracts the relevant fields required for execution, including the operation code, source and destination register identifiers, and immediate operands. By performing this separation, the decoder enables the GPU to correctly interpret each instruction and determine the appropriate operations to be applied to the associated data.
+#### 5.1 Decoder module
+```
+// decoder.v
+`include "definitions.vh"
+
+module decoder (
+    input [`DATA_WIDTH-1:0] instruction,
+    output reg [3:0] opcode,
+    output reg [3:0] dest_reg,
+    output reg [3:0] src1_reg,
+    output reg [3:0] src2_reg,
+    output reg [7:0] immediate
+);
+    always @(*) begin
+        opcode = instruction[15:12];
+        dest_reg = instruction[11:8];
+        src1_reg = instruction[7:4];   // Used in R-Type
+        src2_reg = instruction[3:0];   // Used in R-Type
+
+    end
+endmodule
+```
+The decoder module translates a 16-bit instruction into structured control fields. It extracts the opcode, destination register (dest_reg), and source registers (src1_reg, src2_reg) using fixed bit positions.
+
+Implemented as combinational logic (always @(*)), the decoder assigns instruction[15:12] to the opcode, [11:8] to the destination register, and [7:4] and [3:0] to the source registers for R-type instructions. Although the immediate field is currently unused, the interface supports future I-type instruction expansion.
+#### 5.2 Testbench for decoder
+
+
+
+
 ### 2. Scheduler in GPU
 ### 3. Fetcher in GPU
 ### 4. Decoder in GPU
