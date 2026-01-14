@@ -360,6 +360,7 @@ module scheduler_tb;
 
 endmodule
 ```
+<img width="2052" height="516" alt="image" src="https://github.com/user-attachments/assets/bd48ae21-ca6c-43d8-8360-c1b061df6c64" />
 
 
 #### 2.2 Fetcher Testbench
@@ -1244,6 +1245,7 @@ All threads have halted at time 800000
 ---
 
 ## IV. Acknowledgements
+
 
 
 
