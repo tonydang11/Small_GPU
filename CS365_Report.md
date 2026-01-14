@@ -342,13 +342,8 @@ The hardware design is compiled using Icarus Verilog, while Cocotb orchestrates 
 
 To realize this simulation flow, three main components are used: the Python assembler, the assembly-level test program, and the Cocotb testbench. The assembler generates the instruction memory image, the test program defines the workload executed by the GPU, and the Cocotb testbench controls and observes the simulation.
 ##### 3.3.1 Python Assembler
-The Python assembler converts human-readable assembly code into machine instructions. This allows flexible development and rapid testing of GPU programs.
+The Python assembler converts human-readable assembly code into machine instructions. This allows flexible development and rapid testing of GPU programs. The assembler supports arithmetic, comparison, memory access, control flow, and halt instructions. Registers are encoded using 4-bit identifiers. A two-pass approach is used. The first pass collects labels and constants. The second pass generates the hexadecimal instruction memory file. This file is loaded automatically by the fetcher module during simulation.
 
-The assembler supports arithmetic, comparison, memory access, control flow, and halt instructions. Registers are encoded using 4-bit identifiers.
-
-A two-pass approach is used. The first pass collects labels and constants. The second pass generates the hexadecimal instruction memory file.
-
-This file is loaded automatically by the fetcher module during simulation.
 ```
 # Python program to convert assembly code to instructions fitting for the gpu at instruction_memory.mem
 
@@ -577,15 +572,7 @@ if __name__ == '__main__':
 
 ```
 ##### 3.3.2 Assembly Test Program
-A non-trivial assembly test program was developed to validate the compute core. The program performs an iterative two-dimensional computation resembling a Mandelbrot-style workload.
-
-Symbolic constants define iteration limits, thresholds, and initial values. These are resolved by the assembler.
-
-Nested loops iterate over X and Y coordinates. An inner loop performs repeated arithmetic and comparison operations.
-
-The program uses conditional jumps and memory stores to control execution and write results.
-
-Successful completion, indicated by all threads executing HALT, confirms correct functional integration.
+A non-trivial assembly test program was developed to validate the compute core. The program performs an iterative two-dimensional computation resembling a Mandelbrot-style workload. Symbolic constants define iteration limits, thresholds, and initial values. These are resolved by the assembler. Nested loops iterate over X and Y coordinates. An inner loop performs repeated arithmetic and comparison operations. The program uses conditional jumps and memory stores to control execution and write results. Successful completion, indicated by all threads executing HALT, confirms correct functional integration.
 ```
 // A program written in assembly that can be translated into instructions at instruction_memory.mem to create test case
 
@@ -694,15 +681,7 @@ END_PROGRAM:
 
 ```
 ##### 3.3.3 Assembly Test Program
-The simulation is driven by a Cocotb-based Python testbench. This allows automated and repeatable verification.
-
-The testbench generates the clock and reset signals. It then monitors program execution.
-
-The test passes when the global halt signal is asserted. This indicates that all threads have completed execution.
-
-Execution traces and waveform dumping are enabled. These support debugging and timing analysis.
-
-This verification confirms that the compute core operates correctly within the GPU framework.
+The simulation is driven by a Cocotb-based Python testbench. This allows automated and repeatable verification. The testbench generates the clock and reset signals. It then monitors program execution. The test passes when the global halt signal is asserted. This indicates that all threads have completed execution. Execution traces and waveform dumping are enabled. These support debugging and timing analysis. This verification confirms that the compute core operates correctly within the GPU framework.
 ```
 # testbench/test_matadd_simple.py
 
@@ -842,6 +821,7 @@ All threads have halted at time 800000
 ---
 
 ## IV. Acknowledgements
+
 
 
 
