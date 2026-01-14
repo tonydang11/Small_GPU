@@ -43,9 +43,6 @@ Data Memory, in contrast, stores the input data required for computation as well
 
 #### 1.3 Core Compute
 
-đặt hình ảnh vào đây và giải thích ở dưới nhé
-
-
 * **Instruction Decoder:**
   The instruction decoder is responsible for analyzing the fetched instruction stream and identifying the required execution parameters. It extracts key fields—including operation codes, operand source identifiers, destination registers, and immediate operands—and forwards this decoded information to the relevant computational units for processing.
 
@@ -1611,6 +1608,7 @@ All threads have halted at time 810000
 ---
 
 ## IV. Acknowledgements
+
 
 
 
