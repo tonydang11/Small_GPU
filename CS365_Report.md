@@ -329,7 +329,18 @@ Once execution completes, the testbench displays final register contents and dat
 
 This testbench confirms correct system-level execution, proper thread termination, and overall functional integration of the compute core.
 ### 3. Compute Core Simulation Using Cocotb
-### 4. Simulation Results and Waveform Analysis
+#### 3.1 Compute Core Testbench
+The Compute Core represents the primary execution engine of the GPU, responsible for instruction processing, multi-threaded scheduling, arithmetic operations, memory access, and control flow. As all major GPU functionalities converge at the Compute Core, its successful verification provides strong evidence of the correctness of the overall GPU operation. Consequently, validating the Compute Core through simulation effectively demonstrates the functional behavior of the GPU architecture as a whole.
+#### 3.2 Simulation Framework Overview
+To verify the Compute Core and, by extension, the GPU’s operational behavior, the design is simulated using Cocotb, a Python-based verification framework, together with the Icarus Verilog simulator. This environment enables high-level, programmable test scenarios while preserving cycle-accurate interaction with the hardware description.
+
+The simulation framework integrates the GPU hardware modules, memory initialization files, and a Cocotb-based testbench to form a complete end-to-end verification flow.
+#### 3.3 Simulation Architecture and Setup
+The hardware design includes the Compute Core and its supporting modules, such as the scheduler, fetcher, decoder, and arithmetic logic unit (ALU). An external Python-based assembler translates assembly programs into machine-code memory images, which are loaded into the instruction memory prior to simulation. Data memory is initialized from a hexadecimal file and shared across all executing threads.
+
+The hardware design is compiled using Icarus Verilog, while Cocotb orchestrates the simulation by generating the clock signal, applying the reset sequence, and supervising program execution.
+
+### 4. Simulation Results
 
 ---
 
@@ -341,6 +352,7 @@ This testbench confirms correct system-level execution, proper thread terminatio
 ---
 
 ## IV. Acknowledgements
+
 
 
 
