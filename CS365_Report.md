@@ -341,7 +341,88 @@ The hardware design includes the Compute Core and its supporting modules, such a
 The hardware design is compiled using Icarus Verilog, while Cocotb orchestrates the simulation by generating the clock signal, applying the reset sequence, and supervising program execution.
 
 ### 4. Simulation Results
+```
+tandang@MacBook-Pro-cua-Tan Small_GPU % make SIM=icarus WAVES=1
 
+rm -f results.xml
+"/Applications/Xcode.app/Contents/Developer/usr/bin/make" -f Makefile results.xml
+/Users/tandang/Library/Python/3.9/lib/python/site-packages/cocotb_tools/makefiles/simulators/Makefile.icarus:65: Using MODULE is deprecated, please use COCOTB_TEST_MODULES instead.
+rm -f results.xml
+COCOTB_TEST_MODULES=testbench.test_execution COCOTB_TESTCASE= COCOTB_TEST_FILTER= COCOTB_TOPLEVEL=compute_core TOPLEVEL_LANG=verilog \
+         /opt/homebrew/bin/vvp -M /Users/tandang/Library/Python/3.9/lib/python/site-packages/cocotb/libs -m libcocotbvpi_icarus   sim_build/sim.vvp -fst  
+     -.--ns INFO     gpi                                ..mbed/gpi_embed.cpp:94   in _embed_init_python              Using Python 3.9.13 interpreter at /Applications/Xcode.app/Contents/Developer/usr/bin/python3
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:79   in gpi_print_registered_impl       VPI registered
+     0.00ns INFO     cocotb                             Running on Icarus Verilog version 12.0 (stable)
+     0.00ns INFO     cocotb                             Seeding Python random module with 1768311481
+     0.00ns INFO     cocotb                             Initialized cocotb v2.0.1 from /Users/tandang/Library/Python/3.9/lib/python/site-packages/cocotb
+     0.00ns INFO     cocotb.regression                  pytest not found, install it to enable better AssertionError messages
+     0.00ns INFO     cocotb                             Running tests
+     0.00ns INFO     cocotb.regression                  running testbench.test_execution.test_matadd_simple (1/1)
+                                                            Simplified Testbench for Matrix Addition on GPU Simulation using Cocotb.
+     0.00ns WARNING  py.warnings                        /Users/tandang/Small_GPU/testbench/test_execution.py:14: DeprecationWarning: The 'units' argument has been renamed to 'unit'.
+                                                          clock = Clock(dut.clk, 10, units="ns")  # 10 ns period
+                                                        
+     0.00ns INFO     test                               Clock started with 10 ns period. Asserting reset.
+WARNING: /Users/tandang/Small_GPU/src/fetcher.v:17: $readmemh(src/instruction_memory.mem): Too many words in the file for the requested range [0:15].
+Instruction Memory Initialized in Fetcher:
+instr_mem[0] = 6000
+instr_mem[1] = 6101
+instr_mem[2] = 0221
+instr_mem[3] = 8210
+instr_mem[4] = 1330
+instr_mem[5] = 3032
+instr_mem[6] = 500b
+instr_mem[7] = 2443
+instr_mem[8] = 7402
+instr_mem[9] = f000
+instr_mem[10] = 0000
+instr_mem[11] = 6501
+instr_mem[12] = 0550
+instr_mem[13] = 7503
+instr_mem[14] = f000
+instr_mem[15] = 0000
+Data Memory Initialized:
+data_mem[0] = 0003
+data_mem[1] = 0005
+data_mem[2] = 0000
+data_mem[3] = 0000
+data_mem[4] = 0000
+data_mem[5] = 0000
+data_mem[6] = 0000
+data_mem[7] = 0000
+data_mem[8] = 0000
+data_mem[9] = 0000
+data_mem[10] = 0000
+data_mem[11] = 0000
+data_mem[12] = 0000
+data_mem[13] = 0000
+data_mem[14] = 0000
+data_mem[15] = 0000
+FST info: dumpfile simulation.vcd opened for output.
+FST warning: sim_build/cocotb_iverilog_dump.v:3: $dumpfile called after $dumpvars started,
+                                                 using existing file (simulation.vcd).
+FST warning: ignoring signals in previously scanned scope compute_core.
+FST warning: ignoring signals in previously scanned scope compute_core.alu_inst.
+FST warning: ignoring signals in previously scanned scope compute_core.decoder_inst.
+FST warning: ignoring signals in previously scanned scope compute_core.fetcher_inst.
+FST warning: ignoring signals in previously scanned scope compute_core.scheduler_inst.
+     0.00ns INFO     test                               Deasserting reset.
+DUT Reset at time 0
+    10.00ns INFO     test                               Waiting for 'halt' signal.
+Time=10000 | Thread=0 | PC=0 | Instruction=6000 | Opcode=0110 | dest=R0 | src1=R0 | src2=R0 | imm=  x
+...
+Time=800000 | Thread=7 | PC=9 | Instruction=f000 | Opcode=1111 | dest=R0 | src1=R0 | src2=R0 | imm=  x
+All threads have halted at time 800000
+   810.00ns INFO     test                               Test PASSED: 'halt' signal asserted after 80 cycles.
+   810.00ns INFO     cocotb.regression                  testbench.test_execution.test_matadd_simple passed
+   810.00ns INFO     cocotb.regression                  *****************************************************************************************************
+                                                        ** TEST                                         STATUS  SIM TIME (ns)  REAL TIME (s)  RATIO (ns/s) **
+                                                        *****************************************************************************************************
+                                                        ** testbench.test_execution.test_matadd_simple   PASS         810.00           0.01      80815.11  **
+                                                        *****************************************************************************************************
+                                                        ** TESTS=1 PASS=1 FAIL=0 SKIP=0                               810.00           0.01      63085.12  **
+                                                        *****************************************************************************************************
+```
 ---
 
 ## III. Contribution
@@ -352,6 +433,7 @@ The hardware design is compiled using Icarus Verilog, while Cocotb orchestrates 
 ---
 
 ## IV. Acknowledgements
+
 
 
 
