@@ -470,7 +470,26 @@ module compute_core (
     
 endmodule
 ```
-#### 7.4 Halt and Control Logic
+#### 7.4 Explanation of the Code
+- The reset logic initializes the compute core by setting all program counters to zero, clearing register files and comparison flags, and marking all threads as active.
+
+- The scheduler logic selects one active thread index at each clock cycle, ensuring that only runnable threads are issued for execution.
+
+- The instruction fetch block uses the selected thread’s program counter to read the corresponding instruction from instruction memory.
+
+- The decoder block extracts opcode and operand fields from the fetched instruction and generates control signals for the ALU, memory access, and control flow logic.
+
+- The ALU execution block performs arithmetic or logical operations based on the decoded opcode and produces computation results and comparison outcomes.
+
+- The register write-back block updates the selected thread’s register file with ALU results or loaded memory data.
+
+- The memory access block handles load and store instructions by reading from or writing to shared data memory using computed addresses.
+
+- The control flow block updates the program counter for each thread, either incrementing it normally or modifying it according to branch conditions.
+
+- The halt handling logic marks a thread as inactive when a halt instruction is executed, preventing it from being scheduled again.
+
+- The completion detection logic checks whether all threads are inactive and asserts a done signal to indicate that the compute core has finished execution.
 
 ---
 
@@ -1479,6 +1498,7 @@ All threads have halted at time 800000
 ---
 
 ## IV. Acknowledgements
+
 
 
 
