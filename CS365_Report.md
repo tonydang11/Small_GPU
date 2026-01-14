@@ -4,6 +4,7 @@
 # Project
 
 </div>
+
 # Implementation of a Small GPU Using Verilog
 # -----------------------------------------------
 
@@ -1612,6 +1613,7 @@ All threads have halted at time 810000
 ---
 
 ## IV. Acknowledgements
+
 
 
 
