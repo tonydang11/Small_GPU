@@ -5,7 +5,6 @@
 
 ## I. Program Documentation
 
-
 ### Introduction
 Graphics Processing Units (GPUs) are computing devices designed to efficiently process large amounts of data in parallel. They are well suited for tasks that require many operations to be performed at the same time. Although GPUs were first developed for graphics rendering, they are now widely used in areas such as machine learning, scientific computation, and big data processing.
 
@@ -46,7 +45,6 @@ Data Memory, in contrast, stores the input data required for computation as well
 * **Arithmetic Logic Unit (ALU):**
   The Arithmetic Logic Unit serves as the primary execution element for arithmetic and logical operations, including but not limited to addition, subtraction, multiplication, and comparison functions. To support parallel execution, each compute unit within the GPU architecture incorporates multiple ALUs, enabling simultaneous processing of multiple operations.
 
-
 #### 1.4 Key Features of GPU Architecture
 
 The GPU architecture is characterized by several key features that enable high computational performance:
@@ -65,84 +63,9 @@ The GPU architecture is characterized by several key features that enable high c
 
 5. **Memory Hierarchy and Bandwidth:**
    GPUs employ a hierarchical memory system, including registers, cache, and global memory, to optimize data access. High memory bandwidth and fast on-chip storage reduce access latency and support sustained throughput for memory-intensive applications.
-### 3. Arithmetic Logic Unit (ALU)
-
-The Arithmetic Logic Unit (ALU) represents a fundamental execution block within processor architectures, including Graphics Processing Units. Its primary function is to carry out arithmetic and logical computations on provided operands, thereby producing the results of computational operations. In this project, the ALU is modeled to support a set of core functionalities, including addition, subtraction, multiplication, and comparison. The simulation of these operations provides insight into the role of the ALU and its interaction with input operands throughout the GPU computation workflow.
-
-#### 3.1 Alu replication description 
-```
-// alu.v
-`include "definitions.vh"
-
-
-module alu (
-    input [3:0] opcode,
-    input [`DATA_WIDTH-1:0] operand_a,
-    input [`DATA_WIDTH-1:0] operand_b,
-    output reg [`DATA_WIDTH-1:0] result,
-    output reg cmp_flag
-);
-    always @(*) begin
-        cmp_flag = 0;
-        result = 0;
-        case (opcode)
-            `OP_ADD: result = operand_a + operand_b;
-            `OP_SUB: result = operand_a - operand_b;
-            `OP_MUL: result = operand_a * operand_b;
-            `OP_CMP: begin
-                if (operand_a < operand_b)
-                    cmp_flag = 1;
-                else
-                    cmp_flag = 0;
-            end
-   
-            default: result = 0;
-        endcase
-    end
-endmodule
-```
-
-The ALU (Arithmetic Logic Unit) executes arithmetic and comparison operations based on a 4-bit opcode. It accepts two DATA_WIDTH (16-bit) operands, operand_a and operand_b, and produces a computation result along with a comparison flag cmp_flag.
-
-The module is implemented as combinational logic using always @(*). Both result and cmp_flag are initialized to zero to avoid unintended latches. Arithmetic operations OP_ADD, OP_SUB, OP_MUL directly compute and assign the result. The OP_CMP instruction performs a comparison only; if operand_a is less than operand_b, cmp_flag is asserted. All unsupported opcodes are handled by the default case, which forces the result to zero.
-#### 3.2 Testbench for ALU 
-
-
-.... fetcher
-
-### 5. Instruction Decoder Module
-During GPU instruction execution, the decoding stage constitutes the initial step in the processing pipeline. Instructions are represented in a binary format, and the decoder extracts the relevant fields required for execution, including the operation code, source and destination register identifiers, and immediate operands. By performing this separation, the decoder enables the GPU to correctly interpret each instruction and determine the appropriate operations to be applied to the associated data.
-#### 5.1 Decoder module
-```
-// decoder.v
-`include "definitions.vh"
-
-module decoder (
-    input [`DATA_WIDTH-1:0] instruction,
-    output reg [3:0] opcode,
-    output reg [3:0] dest_reg,
-    output reg [3:0] src1_reg,
-    output reg [3:0] src2_reg,
-    output reg [7:0] immediate
-);
-    always @(*) begin
-        opcode = instruction[15:12];
-        dest_reg = instruction[11:8];
-        src1_reg = instruction[7:4];   // Used in R-Type
-        src2_reg = instruction[3:0];   // Used in R-Type
-        immediate = instruction[7:0];  // Used in I-Type
-    end
-endmodule
-```
-The decoder module translates a 16-bit instruction into structured control fields. It extracts the opcode, destination register (dest_reg), and source registers (src1_reg, src2_reg) using fixed bit positions.
-
-Implemented as combinational logic (always @(*)), the decoder assigns instruction[15:12] to the opcode, [11:8] to the destination register, and [7:4] and [3:0] to the source registers for R-type instructions. Although the immediate field is currently unused, the interface supports future I-type instruction expansion.
-#### 5.2 Testbench for decoder
-
-
-
 
 ### 2. Scheduler in GPU
+
 #### 2.1 Concept of the Scheduler
 
 In parallel processing architectures such as Graphics Processing Units (GPUs), multiple threads are executed concurrently to improve computational throughput. However, because the number of execution units is limited, not all threads can be executed simultaneously in every clock cycle. Therefore, a scheduler is required to manage the execution order of threads and allocate computational resources efficiently.
@@ -227,8 +150,124 @@ Simulation results show that the scheduler correctly implements Round Robin sche
 
 However, because the scheduler does not support priority-based execution, all threads are treated equally regardless of workload characteristics. In scenarios with unbalanced workloads or latency-sensitive tasks, this may result in suboptimal performance. Despite this limitation, the simplicity, fairness, and low hardware overhead of the design make it well suited for the Small GPU project and educational purposes.
 
-### 3. Fetcher in GPU
-### 4. Decoder in GPU
+### 3. Instruction Fetcher Module
+
+#### 3.1 Instruction Fetch Concept and Mechanism
+
+The instruction fetcher is responsible for retrieving instructions from instruction memory based on the current program counter value. In this simple GPU design, the fetcher does not perform any computation or control decisions; instead, it acts as a read-only interface between the compute core and the instruction memory. At each execution cycle, the fetcher receives a program counter value from the compute core and outputs the corresponding instruction. This design keeps the fetch stage simple and allows instruction sequencing to be fully controlled by the compute core logic.
+
+#### 3.2 Program Counter Management
+
+The fetcher does not manage or update the program counter internally. The program counter is maintained by the compute core on a per-thread basis and reflects the current execution position of each thread. The fetcher only uses the provided program counter value to access instruction memory. Any updates to the program counter, such as sequential execution or branching, are handled outside the fetcher, ensuring a clear separation between instruction fetching and control flow logic.
+
+#### 3.3 Fetcher Source Code
+
+```
+`include "definitions.vh"
+
+module fetcher (
+    input [3:0] pc_in,  // 4-bit PC for 16 entries
+    output [`DATA_WIDTH-1:0] instruction
+);
+    // Instruction memory - 16 entries
+    reg [`DATA_WIDTH-1:0] instr_mem [0:15];
+    
+    integer i;  // Declare at module level
+    
+    // Non-pipelined fetch - combinational read
+    assign instruction = instr_mem[pc_in];
+    
+    // Initialize instruction memory
+    initial begin
+        $readmemh("src/instruction_memory.mem", instr_mem);
+        $display("Instruction Memory Initialized in Fetcher:");
+        for (i = 0; i < 16; i = i + 1) begin
+            $display("instr_mem[%0d] = %h", i, instr_mem[i]);
+        end
+    end
+    
+endmodule
+```
+
+#### 3.4 Code Explanation
+
+The fetcher module reads an instruction from instruction memory based on the current program counter value. Instruction memory is implemented as a small register array and is accessed using combinational logic, allowing the instruction output to change immediately when the program counter changes. The instruction memory is initialized from an external file at simulation start, enabling flexible program loading without modifying the source code. Overall, the fetcher contains no control or state logic and relies entirely on the compute core to manage instruction flow.
+
+#### 3.5 Result Observation
+
+The simulation output shows the sequence of fetched instructions corresponding to the program counter values, confirming that the fetcher correctly retrieves instructions from instruction memory. The printed instruction contents verify that the memory is initialized properly and that instruction addressing works as expected. This observation demonstrates that the fetch stage functions correctly as the entry point of the compute core execution pipeline.
+
+### 4. Instruction Decoder Module
+
+#### 4.1 Decoder Concept
+
+The Instruction Decoder is a critical component in the GPU execution pipeline. Its primary role is to interpret binary instructions fetched from instruction memory and convert them into structured control signals that can be used by subsequent execution units. By decomposing each instruction into well-defined fields, the decoder ensures 
+that the GPU correctly identifies the operation to perform and the operands involved.
+
+#### 4.2 Decoder Functional Overview
+
+During instruction execution, the decoder operates immediately after the fetch stage. It receives a 16-bit instruction word and extracts the essential fields required for execution, including the opcode, register indices, and immediate values. This decoding process forms the foundation for correct instruction interpretation and control flow within the GPU compute core.
+
+#### 4.3 Instruction Format
+
+In this design, each instruction is 16 bits wide and follows a fixed-format encoding. The instruction is divided into several fields as follows:
+
+- Opcode (bits [15:12]): Specifies the operation to be executed.
+
+- Destination register (bits [11:8]): Indicates the register where the result will be written.
+
+- Source register 1 (bits [7:4]): First operand register for register-based (R-type) instructions.
+
+- Source register 2 (bits [3:0]): Second operand register for R-type instructions.
+
+- Immediate value (bits [7:0]): Constant operand used in immediate-based (I-type) instructions.
+
+Although both R-type and I-type fields are extracted simultaneously, only the relevant fields are utilized depending on the instruction type.
+
+#### 4.4 Decoder Implementation
+
+```
+// decoder.v
+`include "definitions.vh"
+
+module decoder (
+    input [`DATA_WIDTH-1:0] instruction,
+    output reg [3:0] opcode,
+    output reg [3:0] dest_reg,
+    output reg [3:0] src1_reg,
+    output reg [3:0] src2_reg,
+    output reg [7:0] immediate
+);
+    always @(*) begin
+        opcode    = instruction[15:12];
+        dest_reg = instruction[11:8];
+        src1_reg = instruction[7:4];
+        src2_reg = instruction[3:0];
+        immediate = instruction[7:0];
+    end
+endmodule
+```
+
+The decoder is implemented as pure combinational logic using an always @(*) block. Each output signal is directly derived from fixed bit positions within the instruction word. This design ensures deterministic and cycle-independent decoding behavior without introducing internal state or pipeline latency.
+
+#### 4.5 Decoder Output Signals
+
+The decoder produces structured control outputs that drive subsequent GPU modules:
+
+- opcode determines the operation executed by the ALU.
+
+- dest_reg identifies the target register for write-back.
+
+- src1_reg and src2_reg specify the source registers for arithmetic and logical operations.
+
+- immediate provides support for constant operands in future instruction extensions.
+
+These outputs form the interface between the instruction format and the execution logic.
+
+#### 4.6 Result Observation
+
+Simulation results confirm that the decoder correctly extracts all instruction fields according to the defined bit layout. Any change in the instruction input is immediately reflected in the decoder outputs, validating the correctness of the combinational decoding logic. This behavior ensures reliable instruction interpretation throughout the GPU execution pipeline.
+
 ### 5. Arithmetic Logic Unit (ALU)
 The Arithmetic Logic Unit (ALU) is a core execution component in processor architectures, including simplified GPU designs. Its primary responsibility is to perform arithmetic and comparison operations on input operands as directed by control signals. In this project, the ALU is designed as a lightweight, combinational execution unit that supports a limited but essential instruction set. This design allows the compute core to evaluate expressions, update registers, and make control-flow decisions during execution.
 #### 5.1 ALU Design and Functionality
@@ -271,109 +310,14 @@ For arithmetic instructions (OP_ADD, OP_SUB, and OP_MUL), the ALU directly compu
 #### 5.4 Result Observation
 During simulation, the ALU output reflects the correct arithmetic or comparison outcome for each executed instruction. The computed results are forwarded to the register file for write-back, while the comparison flag is used by control instructions such as conditional branches. This confirms that the ALU operates correctly as the execution engine of the compute core.
 
-### 6. GPU Compute Core
-=======
-### 1. Introduction
-### 2. Overall GPU Architecture
-#### 2.1 High-Level Architecture Overview
-#### 2.2 Core Components and Data Flow
-#### 2.3 Thread-Level Parallelism Model
-#### 2.4 Global Memory Organization
-#### 2.5 Key Features of the Proposed GPU
+### 6. Compute Core Integration
 
-### 3. Scheduler Module
-#### 3.1 Role of the Scheduler in GPU Execution
-#### 3.2 Scheduling Strategy
-#### 3.3 Interface and Control Signals
+#### 6.1 Concept of the Compute Core
 
-### 4. Instruction Fetcher Module
-#### 4.1 Instruction Fetch Concept and Mechanism
-The instruction fetcher is responsible for retrieving instructions from instruction memory based on the current program counter value. In this simple GPU design, the fetcher does not perform any computation or control decisions; instead, it acts as a read-only interface between the compute core and the instruction memory. At each execution cycle, the fetcher receives a program counter value from the compute core and outputs the corresponding instruction. This design keeps the fetch stage simple and allows instruction sequencing to be fully controlled by the compute core logic.
-#### 4.2 Program Counter Management
-The fetcher does not manage or update the program counter internally. The program counter is maintained by the compute core on a per-thread basis and reflects the current execution position of each thread. The fetcher only uses the provided program counter value to access instruction memory. Any updates to the program counter, such as sequential execution or branching, are handled outside the fetcher, ensuring a clear separation between instruction fetching and control flow logic.
-#### 4.3 Fetcher Source Code
-```
-`include "definitions.vh"
-
-module fetcher (
-    input [3:0] pc_in,  // 4-bit PC for 16 entries
-    output [`DATA_WIDTH-1:0] instruction
-);
-    // Instruction memory - 16 entries
-    reg [`DATA_WIDTH-1:0] instr_mem [0:15];
-    
-    integer i;  // Declare at module level
-    
-    // Non-pipelined fetch - combinational read
-    assign instruction = instr_mem[pc_in];
-    
-    // Initialize instruction memory
-    initial begin
-        $readmemh("src/instruction_memory.mem", instr_mem);
-        $display("Instruction Memory Initialized in Fetcher:");
-        for (i = 0; i < 16; i = i + 1) begin
-            $display("instr_mem[%0d] = %h", i, instr_mem[i]);
-        end
-    end
-    
-endmodule
-```
-#### 4.4 Code Explanation
-The fetcher module reads an instruction from instruction memory based on the current program counter value. Instruction memory is implemented as a small register array and is accessed using combinational logic, allowing the instruction output to change immediately when the program counter changes. The instruction memory is initialized from an external file at simulation start, enabling flexible program loading without modifying the source code. Overall, the fetcher contains no control or state logic and relies entirely on the compute core to manage instruction flow.
-#### 4.5 Result Observation
-The simulation output shows the sequence of fetched instructions corresponding to the program counter values, confirming that the fetcher correctly retrieves instructions from instruction memory. The printed instruction contents verify that the memory is initialized properly and that instruction addressing works as expected. This observation demonstrates that the fetch stage functions correctly as the entry point of the compute core execution pipeline.
-
-### 5. Instruction Decoder Module
-#### 5.1 Instruction Format
-#### 5.2 Decoding Process
-#### 5.3 Control Signal Generation
-
-### 6. Arithmetic Logic Unit (ALU)
-The Arithmetic Logic Unit (ALU) is a core execution component in processor architectures, including simplified GPU designs. Its primary responsibility is to perform arithmetic and comparison operations on input operands as directed by control signals. In this project, the ALU is designed as a lightweight, combinational execution unit that supports a limited but essential instruction set. This design allows the compute core to evaluate expressions, update registers, and make control-flow decisions during execution.
-#### 6.1 ALU Design and Functionality
-The ALU supports a small set of fundamental operations required by the compute core, including addition, subtraction, multiplication, and comparison. The specific operation executed is determined by a 4-bit opcode generated by the decoder. Two input operands are provided by the register file, and the ALU produces either a numerical result or a comparison flag depending on the instruction type.
-#### 6.2 ALU Implementation
-```
-// alu.v
-`include "definitions.vh"
-
-module alu (
-    input [3:0] opcode,
-    input [`DATA_WIDTH-1:0] operand_a,
-    input [`DATA_WIDTH-1:0] operand_b,
-    output reg [`DATA_WIDTH-1:0] result,
-    output reg cmp_flag
-);
-    always @(*) begin
-        cmp_flag = 0;
-        result = 0;
-        case (opcode)
-            `OP_ADD: result = operand_a + operand_b;
-            `OP_SUB: result = operand_a - operand_b;
-            `OP_MUL: result = operand_a * operand_b;
-            `OP_CMP: begin
-                if (operand_a < operand_b)
-                    cmp_flag = 1;
-                else
-                    cmp_flag = 0;
-            end
-            default: result = 0;
-        endcase
-    end
-endmodule
-```
-#### 6.3 Explanation of the ALU Code
-The ALU is implemented as a purely combinational module using an always @(*) block, ensuring that outputs update immediately in response to changes in inputs. Both result and cmp_flag are initialized to zero at the beginning of the block to prevent unintended latch inference.
-
-For arithmetic instructions (OP_ADD, OP_SUB, and OP_MUL), the ALU directly computes the result using the two input operands. The comparison instruction (OP_CMP) does not produce a numerical result; instead, it evaluates whether operand_a is less than operand_b and sets the cmp_flag accordingly. Any unsupported or undefined opcode is safely handled by the default case, which forces the output result to zero.
-
-#### 6.4 Result Observation
-During simulation, the ALU output reflects the correct arithmetic or comparison outcome for each executed instruction. The computed results are forwarded to the register file for write-back, while the comparison flag is used by control instructions such as conditional branches. This confirms that the ALU operates correctly as the execution engine of the compute core.
-
-### 7. Compute Core Integration
-#### 7.1 Concept of the Compute Core
 In this project, a compute core is a simplified processing unit that executes basic instructions such as arithmetic and comparison operations. It represents the smallest functional execution block of the simple GPU model, focusing on clarity and educational purpose rather than performance optimization. The compute core combines instruction control and computation to demonstrate how a GPU processes instructions at a fundamental level.
-#### 7.2 Compute Core Architecture
+
+#### 6.2 Compute Core Architecture
+
 <img width="1106" height="1496" alt="image" src="https://github.com/adam-maj/tiny-gpu/blob/master/docs/images/core.png" />
 
 
@@ -382,7 +326,9 @@ The compute core architecture in this project is organized as a simple and clear
 After fetching, the instruction is sent to the Decoder, where it is interpreted into control signals such as opcode, register indices, and execution type. Based on the decoded instruction, the compute core activates one of the functional units, including the Arithmetic Logic Unit (ALU) for computation, the Load/Store Unit (LSU) for memory access, or the Program Counter (PC) logic for control flow updates.
 
 Each execution path is connected to a local Register File, which stores temporary data used during computation. Multiple identical execution blocks are shown in the architecture to represent parallel execution capability, illustrating how a GPU can process multiple instruction streams using the same structure. Overall, this architecture demonstrates how control, computation, and memory access are integrated within a simplified compute core design.
-#### 7.3 Compute Core Implementation in Verilog
+
+#### 6.3 Compute Core Implementation in Verilog
+
 ```
 `include "definitions.vh"
 
@@ -588,7 +534,9 @@ module compute_core (
     
 endmodule
 ```
-#### 7.4 Explanation of the Code
+
+#### 6.4 Explanation of the Code
+
 - The reset logic initializes the compute core by setting all program counters to zero, clearing register files and comparison flags, and marking all threads as active.
 
 - The scheduler logic selects one active thread index at each clock cycle, ensuring that only runnable threads are issued for execution.
@@ -609,7 +557,8 @@ endmodule
 
 - The completion detection logic checks whether all threads are inactive and asserts a done signal to indicate that the compute core has finished execution.
 
-#### 7.5 Output Observation and Execution Result
+#### 6.5 Output Observation and Execution Result
+
 The output of the compute core provides visibility into the execution state of each thread during simulation. It allows observation of program counter progression, indicating how instructions are fetched and executed over time. The register file outputs show the results of arithmetic and logical operations produced by the ALU. Memory-related outputs reflect the correctness of load and store instructions by exposing accessed addresses and data values. Thread activity signals indicate whether each thread is still active or has reached a halt condition. Finally, the completion signal confirms that all threads have finished execution, demonstrating that the compute core successfully processes a simple parallel workload.
 
 ---
@@ -1621,6 +1570,7 @@ All threads have halted at time 810000
 ---
 
 ## IV. Acknowledgements
+
 
 
 
