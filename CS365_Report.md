@@ -253,8 +253,15 @@ However, because the scheduler does not support priority-based execution, all th
 #### 6.3 ALU Input and Output Interface
 
 ### 7. Compute Core Integration
-#### 7.1 Compute Core Architecture
-#### 7.2 Integration of Scheduler, Fetcher, Decoder, and ALU
+#### 7.1 Concept of the Compute Core
+In this project, a compute core is a simplified processing unit that executes basic instructions such as arithmetic and comparison operations. It represents the smallest functional execution block of the simple GPU model, focusing on clarity and educational purpose rather than performance optimization. The compute core combines instruction control and computation to demonstrate how a GPU processes instructions at a fundamental level.
+#### 7.2 Compute Core Architecture
+<img width="1106" height="1496" alt="image" src="https://github.com/adam-maj/tiny-gpu/blob/master/docs/images/core.png" />
+The compute core architecture in this project is organized as a simple and clear instruction processing pipeline. At the top of the compute core, the Scheduler is responsible for selecting which execution context (or thread) is active. This selected context is then passed to the Fetcher, which retrieves the corresponding instruction from instruction memory based on the program counter (PC).
+
+After fetching, the instruction is sent to the Decoder, where it is interpreted into control signals such as opcode, register indices, and execution type. Based on the decoded instruction, the compute core activates one of the functional units, including the Arithmetic Logic Unit (ALU) for computation, the Load/Store Unit (LSU) for memory access, or the Program Counter (PC) logic for control flow updates.
+
+Each execution path is connected to a local Register File, which stores temporary data used during computation. Multiple identical execution blocks are shown in the architecture to represent parallel execution capability, illustrating how a GPU can process multiple instruction streams using the same structure. Overall, this architecture demonstrates how control, computation, and memory access are integrated within a simplified compute core design.
 #### 7.3 Multi-thread Execution Flow
 #### 7.4 Halt and Control Logic
 
@@ -1265,6 +1272,7 @@ All threads have halted at time 800000
 ---
 
 ## IV. Acknowledgements
+
 
 
 
