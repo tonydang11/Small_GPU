@@ -16,18 +16,19 @@ This project presents the design and simulation of a simplified GPU architecture
 ## I. Program Documentation
 
 ### Introduction
-Graphics Processing Units (GPUs) are computing devices designed to efficiently process large amounts of data in parallel. They are well suited for tasks that require many operations to be performed at the same time. Although GPUs were first developed for graphics rendering, they are now widely used in areas such as machine learning, scientific computation, and big data processing.
+Graphics Processing Units (GPUs) are computing devices designed to efficiently process large amounts of data in parallel. They are particularly well suited for workloads that require many operations to be executed simultaneously. Although GPUs were originally developed for graphics rendering, their application has expanded significantly to domains such as machine learning, scientific computing, and big data processing.
 
-Compared to Central Processing Units (CPUs), which mainly execute instructions sequentially, GPUs are optimized for parallel execution. This is made possible by their architecture, which contains many small processing cores that operate concurrently. As a result, GPUs can process large datasets and perform complex calculations more efficiently than CPUs for parallel workloads.
+In contrast to Central Processing Units (CPUs), which primarily execute instructions sequentially with a limited number of powerful cores, GPUs employ a highly parallel architecture consisting of many lightweight processing cores operating concurrently. This architectural difference allows GPUs to achieve significantly higher throughput when handling data-parallel tasks, making them more efficient than CPUs for suitable workloads.
 
-This report examines the architecture of GPUs and simulates their main components using Verilog. Key modules such as the Arithmetic Logic Unit (ALU), decoder, fetch unit, scheduler, and compute core are modeled to illustrate how GPUs operate and support parallel computation.
-### Methodology
-#### Development Tools and Environment
-In this project, the GPU system is implemented using Verilog Hardware Description Language (HDL) to model and describe the behavior of hardware components at the register-transfer level. The development and verification process is primarily conducted using Icarus Verilog in a command-line interface (CLI) environment, which enables efficient compilation and simulation of Verilog modules. Simulation results and signal behaviors are analyzed using GTKWave, allowing detailed inspection of waveform timing and functional correctness.
+The project presented in this report, titled Small GPU, focuses on the design, modeling, and simulation of a simplified GPU architecture. The primary objective of the project is to understand the fundamental hardware components that enable parallel execution in GPUs by implementing them at the register-transfer level using Verilog. Rather than optimizing for maximum performance, the design emphasizes clarity, modularity, and correctness to support educational exploration.
 
-To support development productivity and maintain code organization, Visual Studio Code (VS Code) is used as the primary integrated development environment (IDE) for writing and managing Verilog source files. Antity Gravity is employed as an auxiliary tool to assist in code structure analysis and visualization. In addition, GitHub is used for source code management, version control, and collaboration among team members. System architecture diagrams and module interaction illustrations are created using draw.io, providing clear visual representations of the overall design.
-### Overall System Architecture
-#### 1.1 GPU Architecture
+The main problem addressed in this project is the design and integration of core GPU hardware components that support parallel instruction execution and multithreading. These components include the Arithmetic Logic Unit (ALU), instruction decoder, fetch unit, scheduler, compute core, and global memory interface. Each module is designed, modeled, and simulated to demonstrate its role within the overall GPU architecture and its interaction with other components.
+
+The system requirements for the Small GPU project include support for multiple concurrent threads, a shared global memory space, basic arithmetic and memory instructions, and a scheduling mechanism to manage thread execution. The scheduler is required to ensure fair and starvation-free execution of threads, while the compute core must correctly execute instructions fetched from memory. The design must be synthesizable, modular, and verifiable through simulation and test benches.
+
+Through the implementation and simulation of these components, this project provides insight into how GPUs achieve parallelism and high throughput, serving as a foundational study of GPU architecture and hardware design principles.
+
+### 1.1 GPU Architecture
 The design of a GPU focuses on supporting large-scale parallel processing and high computational bandwidth. This is accomplished through the integration of many functional components that work together to execute operations in an efficient manner.
 
 <img width="1106" height="1496" alt="image" src="https://github.com/user-attachments/assets/3d4e978b-55fa-499b-8422-cb2f6b6bd006" />
@@ -1652,6 +1653,7 @@ We also thank our classmates and peers for their helpful discussions, suggestion
 Patterson, D. A., & Hennessy, J. L. (2014). Computer organization and design: The hardware/software interface (5th ed.). Morgan Kaufmann.
 
 Maj, A. (n.d.). Tiny-GPU: A simple GPU design [GitHub repository]. https://github.com/adam-maj/tiny-gpu
+
 
 
 
