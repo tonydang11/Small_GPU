@@ -798,7 +798,92 @@ FST warning: ignoring signals in previously scanned scope compute_core.scheduler
 DUT Reset at time 0
     10.00ns INFO     test                               Waiting for 'halt' signal.
 Time=10000 | Thread=0 | PC=0 | Instruction=6000 | Opcode=0110 | dest=R0 | src1=R0 | src2=R0 | imm=  x
-...
+Time=20000 | Thread=0 | PC=1 | Instruction=6101 | Opcode=0110 | dest=R1 | src1=R0 | src2=R1 | imm=  x
+Time=30000 | Thread=1 | PC=0 | Instruction=6000 | Opcode=0110 | dest=R0 | src1=R0 | src2=R0 | imm=  x
+Time=40000 | Thread=2 | PC=0 | Instruction=6000 | Opcode=0110 | dest=R0 | src1=R0 | src2=R0 | imm=  x
+Time=50000 | Thread=3 | PC=0 | Instruction=6000 | Opcode=0110 | dest=R0 | src1=R0 | src2=R0 | imm=  x
+Time=60000 | Thread=4 | PC=0 | Instruction=6000 | Opcode=0110 | dest=R0 | src1=R0 | src2=R0 | imm=  x
+Time=70000 | Thread=5 | PC=0 | Instruction=6000 | Opcode=0110 | dest=R0 | src1=R0 | src2=R0 | imm=  x
+Time=80000 | Thread=6 | PC=0 | Instruction=6000 | Opcode=0110 | dest=R0 | src1=R0 | src2=R0 | imm=  x
+Time=90000 | Thread=7 | PC=0 | Instruction=6000 | Opcode=0110 | dest=R0 | src1=R0 | src2=R0 | imm=  x
+Time=100000 | Thread=0 | PC=2 | Instruction=0221 | Opcode=0000 | dest=R2 | src1=R2 | src2=R1 | imm=  x
+Time=110000 | Thread=1 | PC=1 | Instruction=6101 | Opcode=0110 | dest=R1 | src1=R0 | src2=R1 | imm=  x
+Time=120000 | Thread=2 | PC=1 | Instruction=6101 | Opcode=0110 | dest=R1 | src1=R0 | src2=R1 | imm=  x
+Time=130000 | Thread=3 | PC=1 | Instruction=6101 | Opcode=0110 | dest=R1 | src1=R0 | src2=R1 | imm=  x
+Time=140000 | Thread=4 | PC=1 | Instruction=6101 | Opcode=0110 | dest=R1 | src1=R0 | src2=R1 | imm=  x
+Time=150000 | Thread=5 | PC=1 | Instruction=6101 | Opcode=0110 | dest=R1 | src1=R0 | src2=R1 | imm=  x
+Time=160000 | Thread=6 | PC=1 | Instruction=6101 | Opcode=0110 | dest=R1 | src1=R0 | src2=R1 | imm=  x
+Time=170000 | Thread=7 | PC=1 | Instruction=6101 | Opcode=0110 | dest=R1 | src1=R0 | src2=R1 | imm=  x
+Time=180000 | Thread=0 | PC=3 | Instruction=8210 | Opcode=1000 | dest=R2 | src1=R1 | src2=R0 | imm=  x
+Time=190000 | Thread=1 | PC=2 | Instruction=0221 | Opcode=0000 | dest=R2 | src1=R2 | src2=R1 | imm=  x
+Time=200000 | Thread=2 | PC=2 | Instruction=0221 | Opcode=0000 | dest=R2 | src1=R2 | src2=R1 | imm=  x
+Time=210000 | Thread=3 | PC=2 | Instruction=0221 | Opcode=0000 | dest=R2 | src1=R2 | src2=R1 | imm=  x
+Time=220000 | Thread=4 | PC=2 | Instruction=0221 | Opcode=0000 | dest=R2 | src1=R2 | src2=R1 | imm=  x
+Time=230000 | Thread=5 | PC=2 | Instruction=0221 | Opcode=0000 | dest=R2 | src1=R2 | src2=R1 | imm=  x
+Time=240000 | Thread=6 | PC=2 | Instruction=0221 | Opcode=0000 | dest=R2 | src1=R2 | src2=R1 | imm=  x
+Time=250000 | Thread=7 | PC=2 | Instruction=0221 | Opcode=0000 | dest=R2 | src1=R2 | src2=R1 | imm=  x
+Time=260000 | Thread=0 | PC=4 | Instruction=1330 | Opcode=0001 | dest=R3 | src1=R3 | src2=R0 | imm=  x
+Time=270000 | Thread=1 | PC=3 | Instruction=8210 | Opcode=1000 | dest=R2 | src1=R1 | src2=R0 | imm=  x
+Time=280000 | Thread=2 | PC=3 | Instruction=8210 | Opcode=1000 | dest=R2 | src1=R1 | src2=R0 | imm=  x
+Time=290000 | Thread=3 | PC=3 | Instruction=8210 | Opcode=1000 | dest=R2 | src1=R1 | src2=R0 | imm=  x
+Time=300000 | Thread=4 | PC=3 | Instruction=8210 | Opcode=1000 | dest=R2 | src1=R1 | src2=R0 | imm=  x
+Time=310000 | Thread=5 | PC=3 | Instruction=8210 | Opcode=1000 | dest=R2 | src1=R1 | src2=R0 | imm=  x
+Time=320000 | Thread=6 | PC=3 | Instruction=8210 | Opcode=1000 | dest=R2 | src1=R1 | src2=R0 | imm=  x
+Time=330000 | Thread=7 | PC=3 | Instruction=8210 | Opcode=1000 | dest=R2 | src1=R1 | src2=R0 | imm=  x
+Time=340000 | Thread=0 | PC=5 | Instruction=3032 | Opcode=0011 | dest=R0 | src1=R3 | src2=R2 | imm=  x
+Time=350000 | Thread=1 | PC=4 | Instruction=1330 | Opcode=0001 | dest=R3 | src1=R3 | src2=R0 | imm=  x
+Time=360000 | Thread=2 | PC=4 | Instruction=1330 | Opcode=0001 | dest=R3 | src1=R3 | src2=R0 | imm=  x
+Time=370000 | Thread=3 | PC=4 | Instruction=1330 | Opcode=0001 | dest=R3 | src1=R3 | src2=R0 | imm=  x
+Time=380000 | Thread=4 | PC=4 | Instruction=1330 | Opcode=0001 | dest=R3 | src1=R3 | src2=R0 | imm=  x
+Time=390000 | Thread=5 | PC=4 | Instruction=1330 | Opcode=0001 | dest=R3 | src1=R3 | src2=R0 | imm=  x
+Time=400000 | Thread=6 | PC=4 | Instruction=1330 | Opcode=0001 | dest=R3 | src1=R3 | src2=R0 | imm=  x
+Time=410000 | Thread=7 | PC=4 | Instruction=1330 | Opcode=0001 | dest=R3 | src1=R3 | src2=R0 | imm=  x
+Time=420000 | Thread=0 | PC=6 | Instruction=500b | Opcode=0101 | dest=R0 | src1=R0 | src2=R11 | imm=  x
+Time=430000 | Thread=1 | PC=5 | Instruction=3032 | Opcode=0011 | dest=R0 | src1=R3 | src2=R2 | imm=  x
+Time=440000 | Thread=2 | PC=5 | Instruction=3032 | Opcode=0011 | dest=R0 | src1=R3 | src2=R2 | imm=  x
+Time=450000 | Thread=3 | PC=5 | Instruction=3032 | Opcode=0011 | dest=R0 | src1=R3 | src2=R2 | imm=  x
+Time=460000 | Thread=4 | PC=5 | Instruction=3032 | Opcode=0011 | dest=R0 | src1=R3 | src2=R2 | imm=  x
+Time=470000 | Thread=5 | PC=5 | Instruction=3032 | Opcode=0011 | dest=R0 | src1=R3 | src2=R2 | imm=  x
+Time=480000 | Thread=6 | PC=5 | Instruction=3032 | Opcode=0011 | dest=R0 | src1=R3 | src2=R2 | imm=  x
+Time=490000 | Thread=7 | PC=5 | Instruction=3032 | Opcode=0011 | dest=R0 | src1=R3 | src2=R2 | imm=  x
+Time=500000 | Thread=0 | PC=7 | Instruction=2443 | Opcode=0010 | dest=R4 | src1=R4 | src2=R3 | imm=  x
+Time=510000 | Thread=1 | PC=6 | Instruction=500b | Opcode=0101 | dest=R0 | src1=R0 | src2=R11 | imm=  x
+Time=520000 | Thread=2 | PC=6 | Instruction=500b | Opcode=0101 | dest=R0 | src1=R0 | src2=R11 | imm=  x
+Time=530000 | Thread=3 | PC=6 | Instruction=500b | Opcode=0101 | dest=R0 | src1=R0 | src2=R11 | imm=  x
+Time=540000 | Thread=4 | PC=6 | Instruction=500b | Opcode=0101 | dest=R0 | src1=R0 | src2=R11 | imm=  x
+Time=550000 | Thread=5 | PC=6 | Instruction=500b | Opcode=0101 | dest=R0 | src1=R0 | src2=R11 | imm=  x
+Time=560000 | Thread=6 | PC=6 | Instruction=500b | Opcode=0101 | dest=R0 | src1=R0 | src2=R11 | imm=  x
+Time=570000 | Thread=7 | PC=6 | Instruction=500b | Opcode=0101 | dest=R0 | src1=R0 | src2=R11 | imm=  x
+Time=580000 | Thread=0 | PC=8 | Instruction=7402 | Opcode=0111 | dest=R4 | src1=R0 | src2=R2 | imm=  x
+Time=590000 | Thread=1 | PC=7 | Instruction=2443 | Opcode=0010 | dest=R4 | src1=R4 | src2=R3 | imm=  x
+Time=600000 | Thread=2 | PC=7 | Instruction=2443 | Opcode=0010 | dest=R4 | src1=R4 | src2=R3 | imm=  x
+Time=610000 | Thread=3 | PC=7 | Instruction=2443 | Opcode=0010 | dest=R4 | src1=R4 | src2=R3 | imm=  x
+Time=620000 | Thread=4 | PC=7 | Instruction=2443 | Opcode=0010 | dest=R4 | src1=R4 | src2=R3 | imm=  x
+Time=630000 | Thread=5 | PC=7 | Instruction=2443 | Opcode=0010 | dest=R4 | src1=R4 | src2=R3 | imm=  x
+Time=640000 | Thread=6 | PC=7 | Instruction=2443 | Opcode=0010 | dest=R4 | src1=R4 | src2=R3 | imm=  x
+Time=650000 | Thread=7 | PC=7 | Instruction=2443 | Opcode=0010 | dest=R4 | src1=R4 | src2=R3 | imm=  x
+Thread 0 executing HALT. Halting.
+Time=660000 | Thread=0 | PC=9 | Instruction=f000 | Opcode=1111 | dest=R0 | src1=R0 | src2=R0 | imm=  x
+Time=670000 | Thread=1 | PC=8 | Instruction=7402 | Opcode=0111 | dest=R4 | src1=R0 | src2=R2 | imm=  x
+Time=680000 | Thread=2 | PC=8 | Instruction=7402 | Opcode=0111 | dest=R4 | src1=R0 | src2=R2 | imm=  x
+Time=690000 | Thread=3 | PC=8 | Instruction=7402 | Opcode=0111 | dest=R4 | src1=R0 | src2=R2 | imm=  x
+Time=700000 | Thread=4 | PC=8 | Instruction=7402 | Opcode=0111 | dest=R4 | src1=R0 | src2=R2 | imm=  x
+Time=710000 | Thread=5 | PC=8 | Instruction=7402 | Opcode=0111 | dest=R4 | src1=R0 | src2=R2 | imm=  x
+Time=720000 | Thread=6 | PC=8 | Instruction=7402 | Opcode=0111 | dest=R4 | src1=R0 | src2=R2 | imm=  x
+Time=730000 | Thread=7 | PC=8 | Instruction=7402 | Opcode=0111 | dest=R4 | src1=R0 | src2=R2 | imm=  x
+Thread 1 executing HALT. Halting.
+Time=740000 | Thread=1 | PC=9 | Instruction=f000 | Opcode=1111 | dest=R0 | src1=R0 | src2=R0 | imm=  x
+Thread 2 executing HALT. Halting.
+Time=750000 | Thread=2 | PC=9 | Instruction=f000 | Opcode=1111 | dest=R0 | src1=R0 | src2=R0 | imm=  x
+Thread 3 executing HALT. Halting.
+Time=760000 | Thread=3 | PC=9 | Instruction=f000 | Opcode=1111 | dest=R0 | src1=R0 | src2=R0 | imm=  x
+Thread 4 executing HALT. Halting.
+Time=770000 | Thread=4 | PC=9 | Instruction=f000 | Opcode=1111 | dest=R0 | src1=R0 | src2=R0 | imm=  x
+Thread 5 executing HALT. Halting.
+Time=780000 | Thread=5 | PC=9 | Instruction=f000 | Opcode=1111 | dest=R0 | src1=R0 | src2=R0 | imm=  x
+Thread 6 executing HALT. Halting.
+Time=790000 | Thread=6 | PC=9 | Instruction=f000 | Opcode=1111 | dest=R0 | src1=R0 | src2=R0 | imm=  x
+Thread 7 executing HALT. Halting.
 Time=800000 | Thread=7 | PC=9 | Instruction=f000 | Opcode=1111 | dest=R0 | src1=R0 | src2=R0 | imm=  x
 All threads have halted at time 800000
    810.00ns INFO     test                               Test PASSED: 'halt' signal asserted after 80 cycles.
@@ -821,6 +906,7 @@ All threads have halted at time 800000
 ---
 
 ## IV. Acknowledgements
+
 
 
 
