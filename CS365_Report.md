@@ -589,13 +589,15 @@ Verification correctness is evaluated by:
 This methodology ensures that each module behaves correctly in isolation, providing a reliable foundation for higher-level system verification.
 ### 2. Module-Level Testbenches
 #### 2.1 Scheduler Testbench
-The Scheduler Testbench is designed to verify the correct operation of the thread scheduling logic. Its main purpose is to ensure that the scheduler selects a valid thread based on the current set of active threads and responds correctly to clock and reset signals.
+a)Purpose of the Scheduler Testbench
 
-The testbench generates a periodic clock signal with a fixed time period and applies an initial reset to initialize the scheduler state. After releasing the reset, different combinations of the active_threads input are applied to simulate various thread activity scenarios, including cases where some threads are inactive and cases where all threads are active.
+The Scheduler Testbench is designed to verify the correct operation of the thread scheduling logic. Its main objective is to ensure that the scheduler selects a valid thread based on the current set of active threads and responds correctly to clock and reset signals. The testbench aims to confirm correct scheduling behavior under different thread activity conditions.
 
-The output signal scheduled_thread is monitored at every rising edge of the clock. The testbench checks whether the scheduler always selects a thread that is marked as active and whether the scheduling behavior remains stable across clock cycles.
+b)Code Analysis
 
-By testing multiple active thread patterns and reapplying reset during simulation, the testbench verifies both normal operation and reset recovery behavior of the scheduler. This confirms that the scheduler operates correctly under different runtime conditions.
+The testbench generates a periodic clock signal with a fixed time period and applies an initial reset to initialize the scheduler state. After the reset is released, various combinations of the active_threads input are applied to simulate different scheduling scenarios, including cases where some threads are inactive and cases where all threads are active.
+
+The output signal scheduled_thread is monitored at every rising edge of the clock. This allows verification that the scheduler always selects an active thread and that the scheduling behavior remains stable across clock cycles. By testing multiple active thread patterns and reapplying reset during simulation, the testbench verifies both normal operation and reset recovery behavior of the scheduler.
 ```
 module scheduler_tb;
 
@@ -668,13 +670,15 @@ output:
 
 
 #### 2.2 Fetcher Testbench
-The Fetcher Testbench is used to verify the correct instruction fetching behavior based on the program counter (PC) input. The objective of this testbench is to ensure that the fetcher outputs the correct instruction corresponding to each PC value.
+a)Purpose of the Fetcher Testbench
 
-In the testbench, the program counter input is driven with a sequence of increasing values. Although the testbench uses a 16-bit PC signal, only the lower bits are connected to the fetcher module, matching the actual design interface. This verifies that the fetcher correctly interprets the effective PC width.
+The Fetcher Testbench is used to verify the correct instruction fetching behavior based on the program counter (PC) input. Its main purpose is to ensure that the fetcher outputs the correct instruction corresponding to each PC value and correctly interfaces with the instruction memory.
 
-For each applied PC value, the output instruction is monitored and displayed using $display. This allows direct observation of the mapping between PC addresses and fetched instructions during simulation.
+b)Code Analysis
 
-By sweeping through all valid PC values within the supported range, the testbench confirms that the fetcher correctly accesses instruction memory and produces stable, deterministic outputs. This ensures reliable instruction delivery for subsequent pipeline stages.
+In the testbench, the program counter input is driven with a sequence of increasing values to simulate sequential instruction execution. Although a 16-bit PC signal is used in the testbench, only the lower bits are connected to the fetcher module, which matches the actual design interface and verifies correct PC width handling.
+
+For each applied PC value, the output instruction is monitored and displayed using $display. This enables direct observation of the mapping between PC addresses and fetched instructions during simulation. By sweeping through all valid PC values within the supported range, the testbench confirms that the fetcher accesses instruction memory correctly and produces stable, deterministic outputs.
 ```
 // testbench/module/fetcher_tb.v
 
@@ -734,13 +738,15 @@ output:
 <img width="1850" height="1080" alt="image" src="https://github.com/user-attachments/assets/30ecd9e8-cf1d-498c-be75-33409c3fab96" />
 
 #### 2.3 Decoder Testbench
-The Decoder Testbench verifies the correctness of instruction decoding by ensuring that each field within the instruction word is properly extracted. The decoder splits a 16-bit instruction into multiple components, including opcode, destination register, source registers, and immediate value.
+Purpose of the Decoder Testbench
 
-In the testbench, several predefined instruction patterns are applied sequentially to the decoder input. These patterns are chosen to cover different bit configurations and validate that all output fields respond correctly to changes in the instruction value.
+The Decoder Testbench is designed to verify the correctness of instruction decoding by ensuring that each field within a 16-bit instruction word is properly extracted. Its purpose is to confirm that the decoder correctly generates the opcode, destination register, source register fields, and immediate value for downstream processing.
 
-The decoded outputs are continuously monitored and displayed whenever the instruction input changes. This allows verification that the opcode and operand fields are updated consistently and without delay.
+Code Analysis
 
-Through these directed test cases and real-time monitoring, the testbench confirms that the decoder accurately interprets instruction formats and provides correct control and data signals for downstream execution units.
+In the testbench, several predefined instruction patterns are applied sequentially to the decoder input. These patterns are selected to cover different bit configurations and verify that all decoded output fields respond correctly to changes in the instruction value.
+
+The decoded outputs are continuously monitored and displayed whenever the instruction input changes. This allows verification that the opcode and operand fields are updated consistently and without delay. Through directed test cases and real-time monitoring, the testbench confirms that the decoder accurately interprets instruction formats and produces correct control and data signals for subsequent execution units.
 ```
 // decoder_tb.v
 
@@ -799,13 +805,15 @@ output:
 <img width="1850" height="200" alt="image" src="https://github.com/user-attachments/assets/522084ca-cbaf-4dcf-881f-59acde5ce63b" />
 
 #### 2.4 ALU Testbench
-The ALU Testbench is designed to verify the functional correctness of the Arithmetic Logic Unit (ALU) across multiple operations. It focuses on validating both arithmetic results and comparison flags generated by the ALU.
+a)Purpose of the ALU Testbench
 
-The testbench applies a series of directed test cases, each corresponding to a specific operation code, including addition, subtraction, multiplication, comparison, and immediate addition. For each operation, predefined operand values are provided, and the resulting output is observed.
+The ALU Testbench is designed to verify the functional correctness of the Arithmetic Logic Unit (ALU) across multiple operations. Its main purpose is to validate both arithmetic computation results and comparison flags generated by the ALU for different operation types.
 
-Simulation output is monitored using $monitor, which displays the operation code, input operands, result, and comparison flag in real time. This allows immediate verification of correctness for each ALU operation.
+b)Code Analysis
 
-By covering different operation types and operand combinations, the testbench ensures that the ALU produces accurate results and correctly asserts control flags. This confirms that the ALU behaves as expected and is reliable for use in the compute core.
+The testbench applies a series of directed test cases, each corresponding to a specific operation code, including addition, subtraction, multiplication, comparison, and immediate addition. For each test case, predefined operand values are provided, and the resulting output is observed.
+
+Simulation outputs are monitored using $monitor, which displays the operation code, input operands, result, and comparison flag in real time. This allows immediate verification of correctness for each ALU operation. By covering multiple operation types and operand combinations, the testbench confirms that the ALU produces accurate results and correctly asserts control flags for use within the compute core.
 ```
 
 module alu_tb;
@@ -862,15 +870,17 @@ output:
 
 #### 2.5 Compute Core Testbench
 
-The Compute Core Testbench verifies the overall behavior of the compute core at the system level. Unlike module-level testbenches, this testbench evaluates the interaction between multiple internal components, including instruction execution, register files, and data memory.
+a)Purpose of the Compute Core Testbench
 
-The testbench generates a periodic clock signal and applies a single reset pulse to initialize the system. After reset is released, the compute core executes instructions autonomously until the halt signal is asserted.
+The Compute Core Testbench is designed to verify the overall behavior of the compute core by validating correct execution flow and coordination among internal components. Its purpose is to ensure proper instruction execution, thread control, and correct operation of registers and data memory.
 
-During simulation, the testbench monitors program counter values for all threads, enabling observation of control flow progression. A timeout mechanism is included to detect potential deadlock conditions in case the halt signal is never asserted.
+b)Code Analysis
 
-Once execution completes, the testbench displays final register contents and data memory values for each thread. In addition, performance metrics such as total cycle count and average cycles per thread are reported.
+The testbench generates a periodic clock signal and applies a single reset pulse to initialize the compute core. After the reset is released, the core executes instructions autonomously until the halt signal is asserted.
 
-This testbench confirms correct system-level execution, proper thread termination, and overall functional integration of the compute core.
+During simulation, program counter values for all threads are monitored to observe control flow progression. A timeout mechanism is included to detect potential deadlock conditions if the halt signal is not asserted within the expected time frame.
+
+Once execution completes, the testbench reports final register contents and data memory values for each thread. Performance metrics, including total cycle count and average cycles per thread, are also displayed. Through these mechanisms, the testbench confirms correct execution behavior, proper thread termination, and overall functional integration of the compute core.
 ```
 // compute_core_tb.v
 `include "definitions.vh"
@@ -1570,6 +1580,7 @@ All threads have halted at time 810000
 ---
 
 ## IV. Acknowledgements
+
 
 
 
