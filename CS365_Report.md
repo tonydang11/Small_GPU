@@ -491,7 +491,7 @@ endmodule
 
 - The completion detection logic checks whether all threads are inactive and asserts a done signal to indicate that the compute core has finished execution.
 
-### 7.5 Output Observation and Execution Result
+#### 7.5 Output Observation and Execution Result
 The output of the compute core provides visibility into the execution state of each thread during simulation. It allows observation of program counter progression, indicating how instructions are fetched and executed over time. The register file outputs show the results of arithmetic and logical operations produced by the ALU. Memory-related outputs reflect the correctness of load and store instructions by exposing accessed addresses and data values. Thread activity signals indicate whether each thread is still active or has reached a halt condition. Finally, the completion signal confirms that all threads have finished execution, demonstrating that the compute core successfully processes a simple parallel workload.
 
 ---
@@ -1501,6 +1501,7 @@ All threads have halted at time 800000
 ---
 
 ## IV. Acknowledgements
+
 
 
 
