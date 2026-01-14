@@ -14,6 +14,6 @@ module decoder (
         dest_reg = instruction[11:8];
         src1_reg = instruction[7:4];   // Used in R-Type
         src2_reg = instruction[3:0];   // Used in R-Type
-        // immediate = instruction[7:0];  // Used in I-Type
+        immediate = instruction[7:0];  // Used in I-Type
     end
 endmodule
