@@ -1,18 +1,17 @@
-<div align="center">
-
-# Project
-# Implementation of a Small GPU Using Verilog
-
-</div>
-
 
 <div align="center">
 
-**Abstract**
+<strong>Abstract</strong>
 
 </div>
+
+<div style="text-align: justify; margin-left: 15%; margin-right: 15%;">
 
 This project presents the design and simulation of a simplified GPU architecture implemented using Verilog. The proposed system focuses on the core principles of GPU execution by integrating essential components, including an instruction fetcher, decoder, scheduler, arithmetic logic unit (ALU), and a compute core. Instructions are fetched from memory, decoded into control signals, and executed through a lightweight execution pipeline that supports basic arithmetic and comparison operations. The compute core demonstrates multi-stage instruction flow and module interaction without advanced features such as pipelining or parallel warp execution. Through simulation-based verification, this project provides a clear and educational representation of how fundamental GPU components cooperate to perform computation, serving as a foundation for understanding more complex GPU architectures.
+
+</div>
+<div style="page-break-after: always;"></div>
+
 
 ## I. Program Documentation
 
@@ -22,7 +21,13 @@ Graphics Processing Units (GPUs) are computing devices designed to efficiently p
 Compared to Central Processing Units (CPUs), which mainly execute instructions sequentially, GPUs are optimized for parallel execution. This is made possible by their architecture, which contains many small processing cores that operate concurrently. As a result, GPUs can process large datasets and perform complex calculations more efficiently than CPUs for parallel workloads.
 
 This report examines the architecture of GPUs and simulates their main components using Verilog. Key modules such as the Arithmetic Logic Unit (ALU), decoder, fetch unit, scheduler, and compute core are modeled to illustrate how GPUs operate and support parallel computation.
-### 1.1 GPU Architecture
+### Methodology
+#### Development Tools and Environment
+In this project, the GPU system is implemented using Verilog Hardware Description Language (HDL) to model and describe the behavior of hardware components at the register-transfer level. The development and verification process is primarily conducted using Icarus Verilog in a command-line interface (CLI) environment, which enables efficient compilation and simulation of Verilog modules. Simulation results and signal behaviors are analyzed using GTKWave, allowing detailed inspection of waveform timing and functional correctness.
+
+To support development productivity and maintain code organization, Visual Studio Code (VS Code) is used as the primary integrated development environment (IDE) for writing and managing Verilog source files. Antity Gravity is employed as an auxiliary tool to assist in code structure analysis and visualization. In addition, GitHub is used for source code management, version control, and collaboration among team members. System architecture diagrams and module interaction illustrations are created using draw.io, providing clear visual representations of the overall design.
+### Overall System Architecture
+#### 1.1 GPU Architecture
 The design of a GPU focuses on supporting large-scale parallel processing and high computational bandwidth. This is accomplished through the integration of many functional components that work together to execute operations in an efficient manner.
 
 <img width="1106" height="1496" alt="image" src="https://github.com/user-attachments/assets/3d4e978b-55fa-499b-8422-cb2f6b6bd006" />
@@ -93,6 +98,7 @@ The GPU architecture is characterized by several key features that enable high c
 
 5. **Memory Hierarchy and Bandwidth:**
    GPUs employ a hierarchical memory system, including registers, cache, and global memory, to optimize data access. High memory bandwidth and fast on-chip storage reduce access latency and support sustained throughput for memory-intensive applications.
+### Modules
 
 ### 2. Scheduler in GPU
 
