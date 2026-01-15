@@ -719,7 +719,12 @@ module scheduler_tb;
 endmodule
 ```
 output:
-<img width="1850" height="480" alt="image" src="https://github.com/user-attachments/assets/bd48ae21-ca6c-43d8-8360-c1b061df6c64" />
+<img
+  src="https://github.com/user-attachments/assets/bd48ae21-ca6c-43d8-8360-c1b061df6c64"
+  alt="image"
+  style="max-width: 100%; height: auto;"
+/>
+
 
 
 #### 2.2 Fetcher Testbench
@@ -1676,6 +1681,7 @@ We also thank our classmates and peers for their helpful discussions, suggestion
 Patterson, D. A., & Hennessy, J. L. (2014). Computer organization and design: The hardware/software interface (5th ed.). Morgan Kaufmann.
 
 Maj, A. (n.d.). Tiny-GPU: A simple GPU design [GitHub repository]. https://github.com/adam-maj/tiny-gpu
+
 
 
 
