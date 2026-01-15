@@ -1,24 +1,39 @@
 
 
 ## I. Program Documentation
-### 1. Introduction
-### 2. Scheduler in GPU
-### 3. Instruction Fetcher Module
-### 4. Instruction Decoder Module
-### 5. Arithmetic Logic Unit (ALU)
+
+#### 1. Introduction
+
+#### 2. Scheduler in GPU
+
+#### 3. Instruction Fetcher Module
+
+#### 4. Instruction Decoder Module
+
+#### 5. Arithmetic Logic Unit (ALU)
+
 
 ## II. Testbench Documentation
-### 1. Verification Methodology
-### 2. Module-Level Testbenches
-### 3. GPU Simulation Using Cocotb
-### 4. Simulation Result
+
+#### 1. Verification Methodology
+
+#### 2. Module-Level Testbenches
+
+#### 3. GPU Simulation Using Cocotb
+
+#### 4. Simulation Result
+
 
 ## III. Contribution
+
 ## IV. Acknowledgements
+
 ## V. References
 
 
 ## I. Program Documentation
+
+
 
 ### Introduction
 Graphics Processing Units (GPUs) are computing devices designed to efficiently process large amounts of data in parallel. They are particularly well suited for workloads that require many operations to be executed simultaneously. Although GPUs were originally developed for graphics rendering, their application has expanded significantly to domains such as machine learning, scientific computing, and big data processing.
@@ -1676,6 +1691,7 @@ We also thank our classmates and peers for their helpful discussions, suggestion
 Patterson, D. A., & Hennessy, J. L. (2014). Computer organization and design: The hardware/software interface (5th ed.). Morgan Kaufmann.
 
 Maj, A. (n.d.). Tiny-GPU: A simple GPU design [GitHub repository]. https://github.com/adam-maj/tiny-gpu
+
 
 
 
