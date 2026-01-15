@@ -1,3 +1,35 @@
+
+<div align="center">
+
+<strong>Abstract</strong>
+
+</div>
+
+<div style="text-align: justify; margin-left: 15%; margin-right: 15%;">
+
+This project presents the design and simulation of a simplified GPU architecture implemented using Verilog. The proposed system focuses on the core principles of GPU execution by integrating essential components, including an instruction fetcher, decoder, scheduler, arithmetic logic unit (ALU), and a compute core. Instructions are fetched from memory, decoded into control signals, and executed through a lightweight execution pipeline that supports basic arithmetic and comparison operations. The compute core demonstrates multi-stage instruction flow and module interaction without advanced features such as pipelining or parallel warp execution. Through simulation-based verification, this project provides a clear and educational representation of how fundamental GPU components cooperate to perform computation, serving as a foundation for understanding more complex GPU architectures.
+
+</div>
+<div style="page-break-after: always;"></div>
+
+## I. Program Documentation
+### 1. Introduction
+### 2. Scheduler in GPU
+### 3. Instruction Fetcher Module
+### 4. Instruction Decoder Module
+### 5. Arithmetic Logic Unit (ALU)
+
+## II. Testbench Documentation
+### 1. Verification Methodology
+### 2. Module-Level Testbenches
+### 3. GPU Simulation Using Cocotb
+### 4. Simulation Result
+
+## III. Contribution
+## IV. Acknowledgements
+## V. References
+
+
 ## I. Program Documentation
 
 ### Introduction
@@ -679,7 +711,12 @@ module scheduler_tb;
 endmodule
 ```
 output:
-<img width="1850" height="480" alt="image" src="https://github.com/user-attachments/assets/bd48ae21-ca6c-43d8-8360-c1b061df6c64" />
+<img
+  src="https://github.com/user-attachments/assets/bd48ae21-ca6c-43d8-8360-c1b061df6c64"
+  alt="image"
+  style="max-width: 100%; height: auto;"
+/>
+
 
 
 #### 2.2 Fetcher Testbench
@@ -751,7 +788,11 @@ endmodule
 ```
 
 output:
-<img width="1850" height="1080" alt="image" src="https://github.com/user-attachments/assets/30ecd9e8-cf1d-498c-be75-33409c3fab96" />
+<img
+  src="https://github.com/user-attachments/assets/30ecd9e8-cf1d-498c-be75-33409c3fab96"
+  alt="image"
+  style="max-width: 100%; height: auto;"
+/>
 
 #### 2.3 Decoder Testbench
 
@@ -820,7 +861,11 @@ module decoder_tb;
 endmodule
 ```
 output:
-<img width="1850" height="200" alt="image" src="https://github.com/user-attachments/assets/522084ca-cbaf-4dcf-881f-59acde5ce63b" />
+<img
+  src="https://github.com/user-attachments/assets/522084ca-cbaf-4dcf-881f-59acde5ce63b"
+  alt="image"
+  style="max-width: 100%; height: auto;"
+/>
 
 #### 2.4 ALU Testbench
 
@@ -885,7 +930,11 @@ module alu_tb;
 endmodule
 ```
 output:
-<img width="1850" height="220" alt="image" src="https://github.com/user-attachments/assets/5d82fd51-2c2e-4621-93b4-0bae895c0dd9" />
+<img
+  src="https://github.com/user-attachments/assets/5d82fd51-2c2e-4621-93b4-0bae895c0dd9"
+  alt="image"
+  style="max-width: 100%; height: auto;"
+/>
 
 #### 2.5 Compute Core Testbench
 
@@ -1011,12 +1060,15 @@ module compute_core_tb;
 endmodule
 ```
 output:
-<img width="1850" height="1158" alt="image" src="https://github.com/user-attachments/assets/a22c6075-e812-4a4f-bb4d-48427673e9d0" />
-<img width="1850" height="1580" alt="image" src="https://github.com/user-attachments/assets/f993ca49-5f09-46e1-b21e-2c6274e3462a" />
-<img width="1850" height="1634" alt="image" src="https://github.com/user-attachments/assets/1863ac34-fd02-471a-a193-94bdd928d63b" />
-<img width="1850" height="1634" alt="image" src="https://github.com/user-attachments/assets/4a4fe68e-0cce-42b0-ad12-586248538cad" />
-<img width="1850" height="1300" alt="image" src="https://github.com/user-attachments/assets/5d424757-b41e-4f7f-ba0c-531087f2d1ea" />
-<img width="1850" height="752" alt="image" src="https://github.com/user-attachments/assets/e44e7638-a966-4d7f-8f49-daf1d07e88d0" />
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/a22c6075-e812-4a4f-bb4d-48427673e9d0" style="width:80%; height:auto;" />
+  <img src="https://github.com/user-attachments/assets/f993ca49-5f09-46e1-b21e-2c6274e3462a" style="width:80%; height:auto;" />
+  <img src="https://github.com/user-attachments/assets/1863ac34-fd02-471a-a193-94bdd928d63b" style="width:80%; height:auto;" />
+  <img src="https://github.com/user-attachments/assets/4a4fe68e-0cce-42b0-ad12-586248538cad" style="width:80%; height:auto;" />
+  <img src="https://github.com/user-attachments/assets/5d424757-b41e-4f7f-ba0c-531087f2d1ea" style="width:80%; height:auto;" />
+  <img src="https://github.com/user-attachments/assets/e44e7638-a966-4d7f-8f49-daf1d07e88d0" style="width:80%; height:auto;" />
+</p>
 
 
 
@@ -1636,6 +1688,11 @@ We also thank our classmates and peers for their helpful discussions, suggestion
 Patterson, D. A., & Hennessy, J. L. (2014). Computer organization and design: The hardware/software interface (5th ed.). Morgan Kaufmann.
 
 Maj, A. (n.d.). Tiny-GPU: A simple GPU design [GitHub repository]. https://github.com/adam-maj/tiny-gpu
+
+
+
+
+
 
 
 
