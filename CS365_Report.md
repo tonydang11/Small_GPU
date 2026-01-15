@@ -1,24 +1,3 @@
-
-<div align="center">
-
-<strong>Abstract</strong>
-
-</div>
-
-<div style="text-align: justify; margin-left: 15%; margin-right: 15%;">
-
-This project presents the design and simulation of a simplified GPU architecture implemented using Verilog. The proposed system focuses on the core principles of GPU execution by integrating essential components, including an instruction fetcher, decoder, scheduler, arithmetic logic unit (ALU), and a compute core. Instructions are fetched from memory, decoded into control signals, and executed through a lightweight execution pipeline that supports basic arithmetic and comparison operations. The compute core demonstrates multi-stage instruction flow and module interaction without advanced features such as pipelining or parallel warp execution. Through simulation-based verification, this project provides a clear and educational representation of how fundamental GPU components cooperate to perform computation, serving as a foundation for understanding more complex GPU architectures.
-
-</div>
-<div style="page-break-after: always;"></div>
-
-## Table of Contents
-### I. Program Documentation
-### II. Testbench Documentation
-### III. Contribution
-### IV. Acknowledges
-
-
 ## I. Program Documentation
 
 ### Introduction
@@ -37,9 +16,9 @@ Through the implementation and simulation of these components, this project prov
 ### 1.1 GPU Architecture
 The design of a GPU focuses on supporting large-scale parallel processing and high computational bandwidth. This is accomplished through the integration of many functional components that work together to execute operations in an efficient manner.
 
-<img width="812" height="709" alt="compute_core_arch" src="https://github.com/user-attachments/assets/ce607b88-4038-4130-a2c9-7f1db8ca6b3b" />
-
-
+<p align="center">
+  <img width="500" alt="image" src="https://github.com/user-attachments/assets/3d4e978b-55fa-499b-8422-cb2f6b6bd006" />
+</p>
 
 - **Device Control Register**: This unit is responsible for controlling and configuring the operational state of the GPU. It enables the host system to manage GPU execution and monitor its status.
 
@@ -60,37 +39,29 @@ Data Memory, in contrast, stores the input data required for computation as well
 
 #### 1.3 Core Compute
 
-
+<p align="center">
 <img width="812" height="709" alt="compute_core_arch" src="https://github.com/user-attachments/assets/260a4266-7169-4ef7-ac37-e960000dd232" />
+</p>
 
 
 
-- Compute Core
-The compute core is the central execution unit of the GPU, responsible for coordinating instruction processing, thread execution, and data movement across all internal components.
+- **Compute Core**: The compute core is the central execution unit of the GPU, responsible for coordinating instruction processing, thread execution, and data movement across all internal components.
 
-- Scheduler
-The scheduler selects the next active thread to execute, ensuring fair and controlled execution among multiple threads within the compute core.
+- **Scheduler**: The scheduler selects the next active thread to execute, ensuring fair and controlled execution among multiple threads within the compute core.
 
-- Fetcher
-The fetcher retrieves instructions from instruction memory based on the program counter (PC) of the scheduled thread.
+- **Fetcher**: The fetcher retrieves instructions from instruction memory based on the program counter (PC) of the scheduled thread.
 
-- Decoder
-The decoder interprets fetched instructions by extracting opcode, register indices, and immediate values required for execution.
+- **Decoder**: The decoder interprets fetched instructions by extracting opcode, register indices, and immediate values required for execution.
 
-- Arithmetic Logic Unit (ALU)
-The ALU performs arithmetic and comparison operations such as addition, subtraction, multiplication, and condition evaluation.
+- **Arithmetic Logic Unit (ALU)**: The ALU performs arithmetic and comparison operations such as addition, subtraction, multiplication, and condition evaluation.
 
-- Load/Store Unit (LSU)
-The LSU handles memory access operations, enabling data transfer between registers and global or shared memory.
+- **Load/Store Unit (LSU)**: The LSU handles memory access operations, enabling data transfer between registers and global or shared memory.
 
-- Program Counter (PC)
-Each thread maintains its own program counter, tracking the current instruction address and supporting control flow changes such as jumps.
+- **Program Counter (PC)**: Each thread maintains its own program counter, tracking the current instruction address and supporting control flow changes such as jumps.
 
-- Register File
-Each thread is associated with a private register file that stores operands and computation results locally.
+- **Register File**: Each thread is associated with a private register file that stores operands and computation results locally.
 
-- Multi-thread Execution Structure
-The compute core supports multiple threads executing the same instruction flow independently, sharing control logic while maintaining separate execution states.
+- **Multi-thread Execution Structure**: The compute core supports multiple threads executing the same instruction flow independently, sharing control logic while maintaining separate execution states.
 
 
 #### 1.4 Key Features of GPU Architecture
@@ -1646,11 +1617,11 @@ Development Progress Documentation
 
 | Member | Task Weight (%) | Details of Contribution |
 |--------|----------------|-------------------------|
-| **1. Lê Ngô Trác Việt** | 20% | Designed and implemented the instruction decoder (`decoder.v`) and ALU (`alu.v`). Conducted an introductory study on GPU architecture and contributed to the overall architectural understanding of the system. |
-| **2. Nguyễn Minh Việt** | 20% | Implemented the scheduler module, instruction memory, input memory, and system definitions. Supported the integration of memory-related components. |
-| **3. Đặng Hoàng Tân** | 20% | Developed the compute core module, ensuring correct interaction between execution units and other system components. |
-| **4. Bùi Xuân Thái** | 20% | Created and maintained testbenches for system modules, verifying correctness and compatibility during simulation. |
-| **5. Vũ Quang Huy** | 20% | Collaborated on building comprehensive testbenches for all modules, ensuring stable simulation results and functional verification. |
+| **1. Lê Ngô Trác Việt** | 21.33% | Designed and implemented the instruction decoder (`decoder.v`) and ALU (`alu.v`). Conducted an introductory study on GPU architecture and contributed to the overall architectural understanding of the system. |
+| **2. Nguyễn Minh Việt** | 21.33% | Implemented the scheduler module, instruction memory, input memory, and system definitions. Supported the integration of memory-related components. |
+| **3. Đặng Hoàng Tân** | 21.33% | Developed the compute core module, ensuring correct interaction between execution units and other system components. |
+| **4. Bùi Xuân Thái** | 18% | Created and maintained testbenches for system modules, verifying correctness and compatibility during simulation. |
+| **5. Vũ Quang Huy** | 18% | Collaborated on building comprehensive testbenches for all modules, ensuring stable simulation results and functional verification. |
 
 
 ---
